@@ -16,8 +16,24 @@
 1. на GCP поднято 2 машины
 bastion - 10.132.0.9 / 35.210.169.182
 someinternalhost - 10.13.0.8
-2. Настроен доступ по SSH к указанным машинам (пункт с прокидыванием пока не разобрался).
-3. На ВМ bastion установлен VPN сервер Pritunl
+1. Настроен доступ по SSH к указанным машинам 
+   Доп задание подключиться к someinternalhost напрямую.
+    На локальной машине создаем файлик ~/.ssh/config
+    В него заносим:
+
+Host bastion
+  HostName     35.210.169.182
+  User         appuser
+  IdentityFile ~/.ssh/appuser
+  ForwardAgent yes
+
+Host someinternalhost
+  HostName     10.132.0.8
+  User         appuser
+  ProxyJump    bastion
+
+сохраняем, набираем ssh someinternalhost и мы попали в нужную ВМ.
+2. На ВМ bastion установлен VPN сервер Pritunl
 3.1. Подключено доменное имя посредством DNS(sslip.io) - 35-210-169-182.sslip.io
 3.2. Настроен валидный сертификат.
 3.3. В репозиторий сохранен файл конфигурации для OpenVPN (cloud-bastion.ovpn).
