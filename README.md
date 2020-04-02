@@ -40,3 +40,26 @@ Host someinternalhost
 
 bastion_IP = 35.210.169.182
 someinternalhost_IP = 10.132.0.8
+
+## Cloud-Testapp
+
+testapp_IP = 35.195.182.253
+testapp_port = 9292
+
+1. Создана ВМ на GCP 
+
+gcloud compute instances create reddit-app \
+--boot-disk-size=10GB \
+--image-family ubuntu-1604-lts \
+--image-project=ubuntu-os-cloud \
+--zone europe-west1-d \
+--machine-type=g1-small \
+--tags puma-server \
+--restart-on-failure
+
+2. Установлен 
+Ruby - install_ruby.sh
+Monodb - install_mongodb.sh
+Приложение  - deploy.sh
+
+Можно проверить по порту 35.195.182.253:9292
