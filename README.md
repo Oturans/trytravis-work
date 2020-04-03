@@ -40,3 +40,50 @@ Host someinternalhost
 
 bastion_IP = 35.210.169.182
 someinternalhost_IP = 10.132.0.8
+
+## Cloud-Testapp
+
+testapp_IP = 35.187.42.51
+testapp_port = 9292
+
+1. Создана ВМ на GCP 
+
+~~~~
+gcloud compute instances create reddit-app \
+--boot-disk-size=10GB \
+--image-family ubuntu-1604-lts \
+--image-project=ubuntu-os-cloud \
+--zone europe-west1-d \
+--machine-type=g1-small \
+--tags puma-server \
+--restart-on-failure
+~~~~
+
+2. Установлен 
+Ruby - install_ruby.sh
+Monodb - install_mongodb.sh
+Приложение  - deploy.sh
+
+Можно проверить по порту 35.187.42.51:9292
+
+3. Составлен доп скрипт(startup-script.sh) для создания виртуальной машины и развертывая приложения.
+
+Итоговая командна gcloud будет выглядеть:
+
+~~~~
+gcloud compute instances create reddit-app \
+--boot-disk-size=10GB \
+--image-family ubuntu-1604-lts \
+--image-project=ubuntu-os-cloud \
+--zone europe-west1-d \
+--machine-type=g1-small \
+--tags puma-server \
+--restart-on-failure \
+--metadata=startup-script=\#\!/bin/bash$'\n'apt\ update$'\n'apt\ install\ -y\ ruby-full\ ruby-bundler\ build-essential$'\n'apt-key\ adv\ --keyserver\ hkp://keyserver.ubuntu.com:80\ --recv-keys\ 0xd68fa50fea312927$'\n'bash\ -c\ \'echo\ \"deb\ http://repo.mongodb.org/apt/ubuntu\ xenial/mongodb-org/3.2\ multiverse\"\ \>\ /etc/apt/sources.list.d/mongodb-org-3.2.list\'$'\n'apt\ update$'\n'apt\ install\ -y\ mongodb-org\ $'\n'systemctl\ start\ mongod$'\n'systemctl\ enable\ mongod$'\n'git\ clone\ -b\ monolith\ https://github.com/express42/reddit.git$'\n'cd\ reddit\ \&\&\ bundle\ install$'\n'puma\ -d
+~~~~
+
+4. Создание правила фаервола через gcloud 
+
+~~~~
+gcloud compute --project=infra-270920 firewall-rules create default-puma-server --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:9292 --source-ranges=0.0.0.0/0 --target-tags=puma-server
+~~~~
