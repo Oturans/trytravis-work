@@ -1,0 +1,10 @@
+{
+"project_id": "infra-XXXXXX",
+"source_image_family": "ubuntu-1604-lts",
+"machine_type": "f1-micro",
+"disk_size": "100",
+"disk_type": "pd-standard",
+"image_description": "Образ для нашего приложения",
+"network": "default",
+"tags": "TEST-server"
+}
