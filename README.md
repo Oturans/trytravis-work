@@ -87,3 +87,41 @@ gcloud compute instances create reddit-app \
 ~~~~
 gcloud compute --project=infra-270920 firewall-rules create default-puma-server --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:9292 --source-ranges=0.0.0.0/0 --target-tags=puma-server
 ~~~~
+
+## Packer
+
+1. Настроена сборка образов в GCP  
+**reddit-base** - [packer/ubuntu16.json][1]    - только неизменяемая среда  
+**reddit-full** - [packer/immutable.json][2]   - Среда + само приложение  
+Пример заполнения variables - [packer/variables.json.example][3]  
+
+
+[1]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/ubuntu16.json
+[2]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/immutable.json
+[3]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/variables.json.example
+
+2. Для сборки:  
+**reddit-base** использован базовый образ ubuntu_1604 и скрипты:  
+    [packer/scripts/install_mongodb.sh][4]  
+    [packer/scripts/install_ruby.sh][5]  
+
+[4]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/scripts/install_mongodb.sh
+[5]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/scripts/install_ruby.sh
+
+**reddit-full** использован образ reddit-base  
+    скрипт [packer/files/bake.sh][6]  
+    файл конфигуарции службы puma: [packer/files/puma.service][7] (настроен автозапуск)  
+
+[6]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/files/bake.sh
+[7]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/files/puma.service
+
+3. Для запуска виртуальной машины составлен скрипт gcloud  
+[config-scripts/create-reddit-vm.sh][8]  
+
+[8]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/config-scripts/create-reddit-vm.sh
+
+
+
+
+
+
