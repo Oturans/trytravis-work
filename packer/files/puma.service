@@ -10,7 +10,7 @@ After=network.target
 Type=simple
 
 # Preferably configure a non-privileged user
-# User=
+User=appuser
 
 # The path to the your application code root directory.
 # Also replace the "<YOUR_APP_PATH>" place holders below with this path.
