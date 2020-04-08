@@ -5,7 +5,7 @@ terraform {
 
 provider "google" {
   # Версия провайдера
-  version = "2.15"
+  version = ">= 2.15"
 
   # ID проекта
   project = var.project
@@ -69,4 +69,11 @@ resource "google_compute_firewall" "firewall_puma" {
   source_ranges = ["0.0.0.0/0"]
   # Правило применимо для инстансов с перечисленными тэгами
   target_tags = ["reddit-app"]
+}
+
+resource "google_compute_project_metadata" "ssh-keys" {
+  metadata = {
+    ssh-keys = "appuser:${file(var.public_key_path)}appuser1:${file(var.public_key_path)}appuser2:${file(var.public_key_path)}"
+  }
+  project = var.project
 }
