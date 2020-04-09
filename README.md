@@ -133,8 +133,8 @@ gcloud compute --project=infra-270920 firewall-rules create default-puma-server 
        terraform taint  
        terraform fmt  
 
-2. Создаем виртуальную машину на базе образа "reddit-base" задаем инстанс в котором устанавливаем наше приложение reddit-app посредством использования provisioner - [main.tf][9]  
-
+2. Создаем виртуальную машину на базе образа "reddit-base". Устанавливаем наше приложение в созданный инстанс reddit-app посредством использования provisioner -  [main.tf][9]  
+ 
 3. Создаем правило фаервола для нашего приложения. 
 ```
 resource "google_compute_firewall" "firewall_puma" {
@@ -158,20 +158,23 @@ resource "google_compute_firewall" "firewall_puma" {
     ssh-keys = "appuser:${file(var.public_key_path)}appuser1:${file(var.public_key_path)}appuser2:${file(var.public_key_path)}"
   }
 ```
-[9]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/main.tf
-5. Input переменные вынесены в файл, пример в файле [terraform.tfvars.example][10]  
+[9]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/main.tf  
 
-[10]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/terraform.tfvars.example
+5. Input переменные вынесены в файл, пример в файле [terraform.tfvars.example][10]  
+    
+[10]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/terraform.tfvars.example   
+
 6. Output переменные вынесены в файл [outputs.tf][11]  
 
-[11]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/outputs.tf    
-7. В рамках cамостоятельной работы:   
-      7.1. Определили input переменную для приватного ключа  
-      7.2. Определили input переменную для зоны, так же она обладает значением по умолчанию  
-      7.3. Воспользовались командой terraform fmt.  
-      7.4. Пример заполнения [terraform.tfvars.example][10]  
+[11]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/outputs.tf     
+
+7. В рамках самостоятельной работы:   
+ -  Определили input переменную для приватного ключа  
+ -  Определили input переменную для зоны, так же она обладает значением по умолчанию  
+ -  Воспользовались командой terraform fmt.  
+ -  Пример заполнения [terraform.tfvars.example][10]  
 8. Задание *(52 слайд)-несколько ключей в проект - ключи добавлены как один так и несколько ключей - [main.tf][9]  
-9. Задание *(53 слайд) - терраформ удаляет ключи которые не описаны в нем, что в общем то логично, он привеодит проект к тому виду который мы задали и с теми ключами корые задали пунктом выше. Пока проблемы не вижу, скорее всего нет опыта   
-10. Задание **(54 слайд) - балансировщик не настроил, не разобрался с особенностью его работы в GCP   
+9. Задание *(53 слайд) - терраформ удаляет ключи которые не описаны в нем, что в общем то логично, он приводит проект к тому виду который мы задали и с теми ключами которые задали пунктом выше. Пока проблемы не вижу, скорее всего нет опыта   
+10. Задание **(54 слайд) - балансировщик не настроил, не разобрался с особенностью его работы/настройки в GCP   
 11. Задание **(55 слайд) - не выполнил, копипаст. копипаст сложнее сопровождать, человеческий фактор      
 12. задание **(56 слайд) - Выполнил добавил count [main.tf][9]  
