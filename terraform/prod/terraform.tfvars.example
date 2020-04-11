@@ -1,4 +1,8 @@
 project          = "infra-ХХХХХХ"
+zone             = "europe-west1-d"
 public_key_path  = "~/.ssh/appuser.pub"
 disk_image       = "reddit-base"
 private_key_path = "~/.ssh/appuser.pub"
+machine_type_app = "f1-micro"
+machine_type_db  = "f1-micro"
+network          = "default"

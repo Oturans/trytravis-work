@@ -1,8 +1,8 @@
 terraform {
   # Версия terraform
   required_version = ">= 0.12.0"
-}
 
+}
 provider "google" {
   # Версия провайдера
   version = "~> 2.15"
@@ -19,17 +19,22 @@ resource "google_compute_project_metadata" "ssh-keys" {
 }
 
 module "app" {
-  source          = "../modules/app"
-  public_key_path = var.public_key_path
-  zone            = var.zone
-  app_disk_image  = var.app_disk_image
+  source           = "../modules/app"
+  public_key_path  = var.public_key_path
+  private_key_path = var.private_key_path
+  zone             = var.zone
+  app_disk_image   = var.app_disk_image
+  machine_type_app = var.machine_type_app
+  database_url     = module.db.db_internal_ip
 }
 
 module "db" {
-  source          = "../modules/db"
-  public_key_path = var.public_key_path
-  zone            = var.zone
-  db_disk_image   = var.db_disk_image
+  source           = "../modules/db"
+  public_key_path  = var.public_key_path
+  private_key_path = var.private_key_path
+  zone             = var.zone
+  db_disk_image    = var.db_disk_image
+  machine_type_db  = var.machine_type_db
 }
 
 module "vpc" {

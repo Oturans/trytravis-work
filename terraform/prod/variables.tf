@@ -35,3 +35,15 @@ variable db_disk_image {
   default     = "reddit-db-base"
 }
 
+variable machine_type_app {
+  description = "machine type for VM"
+  default     = "g1-small"
+}
+variable machine_type_db {
+  description = "machine type for VM"
+  default     = "g1-small"
+}
+variable database_url {
+  description = "database url"
+  default     = "localhost"
+}
