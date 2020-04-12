@@ -13,37 +13,42 @@
 
 ## Cloud-bastion
 
-1. на GCP поднято 2 машины
-bastion - 10.132.0.9 / 35.210.169.182
-someinternalhost - 10.13.0.8
-1. Настроен доступ по SSH к указанным машинам 
+1. на GCP поднято 2 машины  
+   
+bastion - 10.132.0.9 / 35.210.169.182  
+someinternalhost - 10.13.0.8  
+
+2. Настроен доступ по SSH к указанным машинам 
    Доп задание подключиться к someinternalhost напрямую.
     На локальной машине создаем файлик ~/.ssh/config
     В него заносим:
+```
+Host bastion  
+  HostName     35.210.169.182  
+  User         appuser  
+  IdentityFile ~/.ssh/appuser  
+  ForwardAgent yes  
 
-Host bastion
-  HostName     35.210.169.182
-  User         appuser
-  IdentityFile ~/.ssh/appuser
-  ForwardAgent yes
+Host someinternalhost  
+  HostName     10.132.0.8  
+  User         appuser  
+  ProxyJump    bastion  
+```
 
-Host someinternalhost
-  HostName     10.132.0.8
-  User         appuser
-  ProxyJump    bastion
+      сохраняем, набираем ssh someinternalhost и мы попали в нужную ВМ.  
 
-сохраняем, набираем ssh someinternalhost и мы попали в нужную ВМ.
 2. На ВМ bastion установлен VPN сервер Pritunl
-3.1. Подключено доменное имя посредством DNS(sslip.io) - 35-210-169-182.sslip.io
-3.2. Настроен валидный сертификат.
-3.3. В репозиторий сохранен файл конфигурации для OpenVPN (cloud-bastion.ovpn).
+   
+3.1. Подключено доменное имя посредством DNS(sslip.io) - 35-210-169-182.sslip.io  
+3.2. Настроен валидный сертификат.  
+3.3. В репозиторий сохранен файл конфигурации для  OpenVPN (cloud-bastion.ovpn).  
 
-bastion_IP = 35.210.169.182
-someinternalhost_IP = 10.132.0.8
+bastion_IP = 35.210.169.182  
+someinternalhost_IP = 10.132.0.8  
 
 ## Cloud-Testapp
 
-testapp_IP = 35.187.42.51
+testapp_IP = 35.187.42.51  
 testapp_port = 9292
 
 1. Создана ВМ на GCP 
@@ -64,11 +69,11 @@ Ruby - install_ruby.sh
 Monodb - install_mongodb.sh
 Приложение  - deploy.sh
 
-Можно проверить по порту 35.187.42.51:9292
+   Можно проверить по порту 35.187.42.51:9292
 
 3. Составлен доп скрипт(startup-script.sh) для создания виртуальной машины и развертывая приложения.
 
-Итоговая командна gcloud будет выглядеть:
+   Итоговая командна gcloud будет выглядеть:
 
 ~~~~
 gcloud compute instances create reddit-app \
@@ -91,27 +96,29 @@ gcloud compute --project=infra-270920 firewall-rules create default-puma-server 
 ## Packer
 
 1. Настроена сборка образов в GCP  
-**reddit-base** - [packer/ubuntu16.json][1]    - только неизменяемая среда  
-**reddit-full** - [packer/immutable.json][2]   - Среда + само приложение  
-Пример заполнения variables - [packer/variables.json.example][3]  
-
+   
+    **reddit-base** - [packer/ubuntu16.json][1]    - только неизменяемая среда  
+    **reddit-full** - [packer/immutable.json][2]   - Среда + само приложение  
+    Пример заполнения variables - [packer/variables.json.example][3]  
 
 [1]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/ubuntu16.json
 [2]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/immutable.json
 [3]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/variables.json.example
 
-2. Для сборки:  
+1. Для сборки:  
 **reddit-base** использован базовый образ ubuntu_1604 и скрипты:  
+
     [packer/scripts/install_mongodb.sh][4]  
     [packer/scripts/install_ruby.sh][5]  
 
-[4]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/scripts/install_mongodb.sh
-[5]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/scripts/install_ruby.sh
+    **reddit-full** использован образ reddit-base  скрипт
+    
+    [packer/files/bake.sh][6] 
 
-**reddit-full** использован образ reddit-base  
-    скрипт [packer/files/bake.sh][6]  
     файл конфигуарции службы puma: [packer/files/puma.service][7] (настроен автозапуск)  
 
+[4]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/scripts/install_mongodb.sh
+[5]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/scripts/install_ruby.sh
 [6]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/files/bake.sh
 [7]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/files/puma.service
 
@@ -178,3 +185,54 @@ resource "google_compute_firewall" "firewall_puma" {
 10. Задание **(54 слайд) - балансировщик не настроил, не разобрался с особенностью его работы/настройки в GCP   
 11. Задание **(55 слайд) - не выполнил, копипаст. копипаст сложнее сопровождать, человеческий фактор      
 12. задание **(56 слайд) - Выполнил добавил count [main.tf][9]  
+
+## Terraform - 2
+
+1. Создали правило Firewall, для решения конфликта что правило уже создано, было импортировано правило в stage  
+ - terraform import google_compute_firewall.firewall_ssh default-allow-ssh   
+2. На практических примерах рассмотрели как влияет очередность создания ресурсов, от внутренних зависимостей одного ресурсы от другого. Далее в ДЗ это будет проверено. при разворачивании приложения.
+3. Создали отдельные шаблоны посредством [./packer/db.json][12] и [./packer/app.json][13] и следовательно собрали в GCP два шаблона reddit-app-**** и reddit-base-****  
+
+[12]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-2/packer/db.json
+[13]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-2/packer/app.json
+
+4. Вынесли из основного файла приложение, базу и настройки сети в отдельные модули:  
+      ./terraform/module/app  - приложение  
+      ./terraform/module/db   - база данных  
+      ./terraform/module/vpc  - настройки сети  
+5. Создали 2 отдельных набора сред stage и prod с ипользованием ранее созданных модулей(пункт 4) полностью перенеся внутрь каждой из сред ранее настроенное. Отличие prod среды от stage это ограничение доступа к prod только с локального ip. 
+6. В корне дирректории ./terraform/ вместо старого проекта, теперь лежит проект по созданию на GCP backet-а
+7. **Задание со звездочкой** State наших сред (stage/prod) в перенесены на backet. 
+```
+  terraform {
+    backend "gcs" {
+     bucket = "storage-bucket-oturans"
+      prefix = "terraform/prod"
+   }
+  }
+```
+Проведен эксперимент одновременного применения изменений для среды prod. Первый кто успевает начать применение блокирует среду и второму выходит ошибка, что в данный момент внесение изменений в GCP не возможно.
+
+8. **Задание со 2 звездочками** С помошью Provisioner проведен деплой приложений
+   reddit-app:  
+    ```
+        provisioner "file" {
+          content     = templatefile("${path.module}/files/puma.service.tpl", { database_url = var.database_url })
+            destination = "/tmp/puma.service"
+        }
+        provisioner "remote-exec" {
+            script = "${path.module}/files/deploy.sh"
+        }
+    ```
+    
+для того что бы передать IP создаваемой DB приложению, мы добавилии строку с переменной **DATABASE_URL** в файл **puma.service**, а посредством функции **templatefile** передали значение **DATABASE_URL** после создания **reddit-db**.  
+
+9. Измененили конфигурацию mondodb для возможности работы с ней из внешней сети. Выполнялась так же средствами Provisioner на этапе создания **reddit-db** была прозведена замена **127.0.0.1 -> 0.0.0.0** и перезапуск mondodb. 
+```
+  provisioner "remote-exec" {
+    inline = [
+      "sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf",
+      "sudo systemctl stop mongod.service",
+      "sudo systemctl start mongod.service"
+    ]
+```
