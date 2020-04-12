@@ -1,0 +1,9 @@
+plugin: gcp_compute
+projects:
+  - infra-270920
+zones:
+  - europe-west1-d
+filters: []
+auth_kind: serviceaccount
+service_account_file: ../../../.gcp/infra.json
+#gcp-infra@infra-270920.iam.gserviceaccount.com
