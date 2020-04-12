@@ -264,7 +264,7 @@ resource "google_compute_firewall" "firewall_puma" {
     [inventory]  
     enable_plugins = gcp_compute  
     ```  
-  - отредактировано знаения переменной **inventory**, теперь там **./inventory.gcp.yml**
+  - отредактировано значения переменной **inventory**, теперь там **./inventory.gcp.yml**
     ```  
     [defaults]  
     inventory = ./inventory.gcp.yml 
