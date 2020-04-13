@@ -29,13 +29,6 @@
 
         }
     ],
-    // "provisioners":[
-	// {
-	// "type": "shell",
-	// "script": "scripts/install_ruby.sh",
-	// "execute_command": "sudo {{.Path}}"
-	// }
-    // ]
     "provisioners": [
         {
         "type": "ansible",
