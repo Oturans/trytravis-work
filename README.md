@@ -101,11 +101,7 @@ gcloud compute --project=infra-270920 firewall-rules create default-puma-server 
     **reddit-full** - [packer/immutable.json][2]   - Среда + само приложение  
     Пример заполнения variables - [packer/variables.json.example][3]  
 
-[1]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/ubuntu16.json
-[2]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/immutable.json
-[3]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/variables.json.example
-
-1. Для сборки:  
+2. Для сборки:  
 **reddit-base** использован базовый образ ubuntu_1604 и скрипты:  
 
     [packer/scripts/install_mongodb.sh][4]  
@@ -117,14 +113,18 @@ gcloud compute --project=infra-270920 firewall-rules create default-puma-server 
 
     файл конфигуарции службы puma: [packer/files/puma.service][7] (настроен автозапуск)  
 
-[4]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/scripts/install_mongodb.sh
-[5]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/scripts/install_ruby.sh
-[6]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/files/bake.sh
-[7]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/files/puma.service
+
 
 3. Для запуска виртуальной машины составлен скрипт gcloud  
 [config-scripts/create-reddit-vm.sh][8]  
 
+[1]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/ubuntu16.json
+[2]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/immutable.json
+[3]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/variables.json.example
+[4]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/scripts/install_mongodb.sh
+[5]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/scripts/install_ruby.sh
+[6]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/files/bake.sh
+[7]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/packer/files/puma.service
 [8]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/packer-base/config-scripts/create-reddit-vm.sh
 
 
@@ -140,9 +140,9 @@ gcloud compute --project=infra-270920 firewall-rules create default-puma-server 
        terraform taint  
        terraform fmt  
 
-2. Создаем виртуальную машину на базе образа "reddit-base". Устанавливаем наше приложение в созданный инстанс reddit-app посредством использования provisioner -  [main.tf][9]  
- 
-3. Создаем правило фаервола для нашего приложения. 
+2. Создаем виртуальную машину на базе образа "reddit-base". Устанавливаем наше приложение в созданный инстанс reddit-app посредством посредством использования provisioner - [main.tf][9]  
+
+3. Создаем правило фаервола для нашего приложения.  
 ```
 resource "google_compute_firewall" "firewall_puma" {
   name = "allow-puma-default"
@@ -159,32 +159,32 @@ resource "google_compute_firewall" "firewall_puma" {
   target_tags = ["reddit-app"]
 }
 ```
-4. Добавляем **SSH-KEY** в наш проект(appuser,appuser1,appuser2) 
+4. Добавляем **SSH-KEY** в наш проект(appuser,appuser1,appuser2)  
 ```
  metadata = {
     ssh-keys = "appuser:${file(var.public_key_path)}appuser1:${file(var.public_key_path)}appuser2:${file(var.public_key_path)}"
   }
 ```
-[9]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/main.tf  
 
 5. Input переменные вынесены в файл, пример в файле [terraform.tfvars.example][10]  
-    
-[10]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/terraform.tfvars.example   
 
 6. Output переменные вынесены в файл [outputs.tf][11]  
 
-[11]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/outputs.tf     
-
-7. В рамках самостоятельной работы:   
- -  Определили input переменную для приватного ключа  
- -  Определили input переменную для зоны, так же она обладает значением по умолчанию  
- -  Воспользовались командой terraform fmt.  
- -  Пример заполнения [terraform.tfvars.example][10]  
+  
+7. В рамках cамостоятельной работы:  
+      7.1. Определили input переменную для приватного ключа  
+      7.2. Определили input переменную для зоны, так же она обладает значением по умолчанию  
+      7.3. Воспользовались командой terraform fmt.  
+      7.4. Пример заполнения [terraform.tfvars.example][10]  
 8. Задание *(52 слайд)-несколько ключей в проект - ключи добавлены как один так и несколько ключей - [main.tf][9]  
-9. Задание *(53 слайд) - терраформ удаляет ключи которые не описаны в нем, что в общем то логично, он приводит проект к тому виду который мы задали и с теми ключами которые задали пунктом выше. Пока проблемы не вижу, скорее всего нет опыта   
-10. Задание **(54 слайд) - балансировщик не настроил, не разобрался с особенностью его работы/настройки в GCP   
-11. Задание **(55 слайд) - не выполнил, копипаст. копипаст сложнее сопровождать, человеческий фактор      
-12. задание **(56 слайд) - Выполнил добавил count [main.tf][9]  
+9. Задание *(53 слайд) - терраформ удаляет ключи которые не описаны в нем, что в общем то логично, он привеодит проект к тому виду который мы задали и с теми ключами которые задали пунктом выше. Пока проблемы не вижу, скорее всего нет опыта  
+10. Задание 2*(54 слайд) - балансировщик не настроил, не разобрался с особенностью его работы/настройки в GCP  
+11. Задание 2*(55 слайд) - не выполнил, копипаст. копипаст сложнее сопровождать, человеческий фактор  
+12. Задание 2*(56 слайд) - Выполнил добавил count [main.tf][9]  
+
+[9]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/main.tf
+[10]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/terraform.tfvars.example
+[11]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-1/terraform/outputs.tf
 
 ## Terraform - 2
 
@@ -192,9 +192,6 @@ resource "google_compute_firewall" "firewall_puma" {
  - terraform import google_compute_firewall.firewall_ssh default-allow-ssh   
 2. На практических примерах рассмотрели как влияет очередность создания ресурсов, от внутренних зависимостей одного ресурсы от другого. Далее в ДЗ это будет проверено. при разворачивании приложения.
 3. Создали отдельные шаблоны посредством [./packer/db.json][12] и [./packer/app.json][13] и следовательно собрали в GCP два шаблона reddit-app-**** и reddit-base-****  
-
-[12]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-2/packer/db.json
-[13]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-2/packer/app.json
 
 4. Вынесли из основного файла приложение, базу и настройки сети в отдельные модули:  
       ./terraform/module/app  - приложение  
@@ -236,3 +233,50 @@ resource "google_compute_firewall" "firewall_puma" {
       "sudo systemctl start mongod.service"
     ]
 ```
+[12]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-2/packer/db.json
+[13]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/terraform-2/packer/app.json
+
+## Ansible 1  
+
+1. Установлен Ansible подготовлен файл статический inventory [ini][14];  [yml][15];  
+2. Рассмотрена работа нескольких модулей, и отличия использования модуля от использования баш скриптов.  
+  - В отличии от баш скриптов модули анализируют состояние обьекта над которым будет проводиться манипуляция и следовательно повторного срабатывания не будет если это не требуется.   
+  - Подробно это расморено на применении playbook [clone.yml][16] в примере видно что в случае когда используется модуль git при повторном использовании ansible ничего не меняется, если же те же действия провести через баш скрипт, повторное выполнение даст ошибку.  
+  - Так же из данного примера (а именно когда мы удалили то что было загружено ансиблом на сервер) при повторно использовании ansible повторно загружил все на сервер, из чего видно что ansible все приводит к тому состоянию которое задано, при этом последнего состояния он не хранит.
+
+3. Динамическая inventary [(https://medium.com/@Temikus/ansible-gcp-dynamic-inventory-2-0-7f3531b28434)][17]
+  - создан файл [inventory.gcp.yml][18] со следующим содержанием 
+    ```
+    plugin: gcp_compute  
+    projects:  
+      - infra-270920  
+    zones:  
+      - europe-west1-d  
+    filters: []  
+    auth_kind: serviceaccount  
+    service_account_file: ../../../.gcp/infra.json  
+    ```
+ 
+  - создан service accaunts и ключ (infra.json) - путь на ключик добавлен в файл [inventory.gcp.yml][18]
+  - в файл [ansible.cfg][19] добавлен блок **[inventory]**, подключен плагин **gcp_compute**
+  - 
+    ```  
+    [inventory]  
+    enable_plugins = gcp_compute  
+    ```  
+  - отредактировано значения переменной **inventory**, теперь там **./inventory.gcp.yml**
+    ```  
+    [defaults]  
+    inventory = ./inventory.gcp.yml 
+    ```
+  - команда вида **ansible all -m ping** отрабатывает, но для TravicCI изменения в части динамической инвентари прищлось закоментить.  
+    
+    **P.S. ДЗ получилось очень мутным. Я до сих пор не уверен что сделал то что от меня просили. Если что то не так, просьба пояснить, я постараюсь переделать.**
+
+
+[14]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-1/ansible/inventory
+[15]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-1/ansible/inventory.yml
+[16]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-1/ansible/clone.yml
+[17]: https://medium.com/@Temikus/ansible-gcp-dynamic-inventory-2-0-7f3531b28434
+[18]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-1/ansible/inventory.gcp.yml
+[19]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-1/ansible/ansible.cfg
