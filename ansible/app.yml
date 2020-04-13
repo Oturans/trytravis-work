@@ -3,7 +3,7 @@
   become: true
   #tags: app-tag
   vars:
-    db_host: 10.132.0.36
+    db_host: 10.132.0.42
   tasks:
     - name: Add unit file for Puma
       copy:
@@ -24,3 +24,4 @@
   handlers: # <-- Добавим блок handlers и задачу
   - name: reload puma
     service: name=puma state=restarted
+    
