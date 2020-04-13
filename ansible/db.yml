@@ -1,6 +1,6 @@
 ---
 - name: Configure MongoDB
-  hosts: db
+  hosts: reddit-db
   become: true
   #tags: db-tag
   vars:
@@ -16,4 +16,3 @@
   handlers: # <-- Добавим блок handlers и задачу
   - name: restart mongod
     service: name=mongod state=restarted
-  

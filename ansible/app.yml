@@ -1,5 +1,5 @@
 - name: Configure App
-  hosts: app
+  hosts: reddit-app
   become: true
   #tags: app-tag
   vars:
@@ -24,4 +24,3 @@
   handlers: # <-- Добавим блок handlers и задачу
   - name: reload puma
     service: name=puma state=restarted
-    
