@@ -1,5 +1,4 @@
 - name: Deploy application
-  #tags: deploy-tag
   become: true
   hosts: app
   tasks:
