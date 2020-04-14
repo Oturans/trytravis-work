@@ -5,4 +5,5 @@ packer/imu_variables.json
 *.tfstate.backup
 *.tfvars
 .terraform/
+*.retry
 
