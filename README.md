@@ -280,3 +280,57 @@ resource "google_compute_firewall" "firewall_puma" {
 [17]: https://medium.com/@Temikus/ansible-gcp-dynamic-inventory-2-0-7f3531b28434
 [18]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-1/ansible/inventory.gcp.yml
 [19]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-1/ansible/ansible.cfg
+
+
+## Ansible 2
+
+1. Составлены playbook в папке ./ansible/:  
+   
+   **reddit_app_one_play.yml** - один сценарий на все в одном файле  
+   **reddit_app_multiple_plays.yml** - отдельные сценарии в одном файле  
+   **db.yml** - отдельный файл/сценарий на конфиг базы данных
+   **app.yml **- отдельный файл/сценарий на конфиг среды для приложения  
+   **deploy.yml** - отдельный файл/сценарий на выкладывание приложения  
+   **site.xml** - отдельный сценарий включающий 3 отдельных (db/app/deploy)
+
+   Дополнительные файлы  
+
+   **packer_app.yml** - отдельный файл/сценарий для сборки пакером образа сервера для приложения, замена shell provisioner  
+   **packer_db.yml** - отдельный файл/сценарий для сборки пакером образа сервера для базы данных, замена shell provisioner
+
+   Дополнительные файлы:  
+  **/templates/db_config.j2** - дополнительный конфиг для приложения, указание базы данных  
+  **/templates/mongod.conf.j2** - изменение конфига mongod для работы с внешним миром.  
+  **/files/puma.service** - Unit файл для запуска pums в systemd  
+
+2. Расмотрена работа ключей:  
+   
+      **--limit** - ограничение выборки ВМ при применении playbook  
+      **--tags**  - ограничение применения сценариев по тегу при применении playbook  
+      **--check** - проверка применения playbook без внесения изменений в продакшен  
+      для проверки  packer_app.yml/packer_db.yml потребовалась дополнительная установка **python-apt**  
+
+3. **Задание со \***  
+   
+    Настроен динамический **inventory.gcp.yml**
+    ```
+        plugin: gcp_compute
+        projects:
+          - infra-270920
+        zones:
+          - europe-west1-d
+        filters: []
+        auth_kind: serviceaccount
+        service_account_file: ../../../.gcp/infra.json 
+        groups:
+          app: "'app' in name"
+          db: "'db' in name"
+        compose:
+          ansible_host: networkInterfaces[0].accessConfigs[0].natIPssConfigs[0].natIP[0].natIPssConfigs[0].natIP
+    ```
+  Блок с групировкой взять кусками из двух статей:
+
+  https://docs.ansible.com/ansible/latest/plugins/inventory/gcp_compute.html#parameter-keyed_groups
+  http://matthieure.me/2018/12/31/ansible_inventory_plugin.html
+
+**P.S. DI Работает так как нам надо, но остается недопонимание, так как сделано по примеру, а полного описания каждого блока не нашел. Подскажете буду благодарен.**  
