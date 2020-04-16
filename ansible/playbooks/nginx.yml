@@ -1,7 +1,0 @@
-- hosts: app
-
-  roles:
-  - role: jdauphant.nginx
-    nginx_sites:
-      custom_bar:
-        template: custom_bar.conf.j2
