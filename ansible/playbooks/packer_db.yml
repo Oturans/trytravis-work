@@ -1,5 +1,5 @@
 - name: Install mondoDB
-  hosts: db
+  hosts: all
   become: true
   vars:
   tasks:
@@ -18,6 +18,11 @@
     - name: Update repositories cache
       apt:
         update_cache: yes
+
+    - name: Install python-apt
+      apt:
+        name: python-apt
+        state: present 
 
     - name: Install mongodb
       apt:

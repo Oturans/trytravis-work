@@ -1,6 +1,6 @@
 ---
 - name: Configure MongoDB
-  hosts: db
+  hosts: packer
   become: true
   tags: db-tag
   vars:
