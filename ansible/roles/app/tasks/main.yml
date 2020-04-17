@@ -9,7 +9,7 @@
 
 - name: Add config for DB connection
   template:
-    src: db_config.j2 
+    src: db_config.j2
     dest: /home/appuser/db_config
     owner: appuser
     group: appuser
