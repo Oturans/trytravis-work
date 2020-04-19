@@ -4,6 +4,9 @@ language: bash
 before_install:
 - curl https://raw.githubusercontent.com/express42/otus-homeworks/2020-02/run.sh |
   bash
+- packer validate -syntax-only -var-file packer/variables.json packer/db.json
+- packer validate -syntax-only -var-file packer/variables.json packer/app.json
+
 notifications:
   slack:
     rooms:
