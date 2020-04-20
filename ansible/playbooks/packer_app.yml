@@ -4,8 +4,8 @@
   become: true
   tasks:
   # Установим в цикле все зависимости
-  - name: Install ruby 
-    apt: 
+  - name: Install ruby
+    apt:
       name: "{{ item }}"
       state: present
     with_items:
