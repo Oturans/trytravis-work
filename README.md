@@ -339,17 +339,18 @@ resource "google_compute_firewall" "firewall_puma" {
 ## Ansible 3
 [![Build Status](https://travis-ci.org/Oturans/trytravis-work.svg?branch=ansible-3)](https://travis-ci.org/Oturans/trytravis-work)
 
-1. Настроили роли db и app
-2. Настроили 2 окружения stage и prod
-3. Полностью реорганизовали структуру каталога ./ansible
-4. Настроили работу с ролью jdauphant.nginx
-5. Расмотрели механизм работы с **Ansible Vault**
-6. **Задание со \*** Динамическое инвентари настроено в прошлом ДЗ.
-7. **Задание со 2\*** В травис добавлены проверки
-    **packer validate**
-    **terraform validate** и **tflint**
-    **ansible-lint**
-    Для отладки использвуется **trytravis**
-    https://travis-ci.org/github/Oturans/trytravis-work
-    в README.md добавлен бейдж.
+1. Настроили роли db и app  
+2. Настроили 2 окружения stage и prod  
+3. Полностью реорганизовали структуру каталога ./ansible  
+4. Настроили работу с ролью jdauphant.nginx  
+5. Расмотрели механизм работы с **Ansible Vault**  
+6. **Задание со \*** Динамическое инвентари настроено в прошлом ДЗ.  
+7. **Задание со 2\*** В TravisCI добавлены проверки [.travis.yml][20]  
+    **packer validate**  
+    **terraform validate** и **tflint**  
+    **ansible-lint**  
+    Для отладки использвуется **trytravis**  
+    https://travis-ci.org/github/Oturans/trytravis-work  
+    в Readme добавлен бейдж.  
 
+[20]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-3/.travis.yml
