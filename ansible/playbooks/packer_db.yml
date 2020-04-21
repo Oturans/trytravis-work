@@ -1,35 +1,40 @@
 - name: Install mondoDB
-  hosts: db
+  hosts: all
   become: true
   vars:
   tasks:
-    - name: Add key 
+    - name: Add key
       apt_key:
         keyserver: hkp://keyserver.ubuntu.com:80
         id: EA312927
-        state: present 
+        state: present
 
     - name: Add apt repository mongodb
       apt_repository:
         repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
         filename: mongodb-org-3.2.list
-        state: present 
+        state: present
 
     - name: Update repositories cache
       apt:
         update_cache: yes
 
+    - name: Install python-apt
+      apt:
+        name: python-apt
+        state: present
+
     - name: Install mongodb
       apt:
-        name: mongodb-org 
-        state: present 
-    
+        name: mongodb-org
+        state: present
+
     - name: start puma
-      systemd: 
+      systemd:
         name: mongodb
         state: started
 
     - name: enable puma
-      systemd: 
+      systemd:
         name: mongodb
         enabled: yes

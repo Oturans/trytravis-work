@@ -1,3 +1,4 @@
+---
 - name: Deploy application
   become: true
   hosts: app
@@ -8,12 +9,13 @@
         dest: /home/appuser/reddit
         version: monolith # <-- Указываем нужную ветку
       notify: reload puma
-      
+
     - name: Bundle install
       bundler:
         state: present
-        chdir: /home/appuser/reddit # <-- В какой директории выполнить команду bundle   
-        
+        # В какой директории выполнить команду bundler
+        chdir: /home/appuser/reddit
+
   handlers: # <-- Добавим блок handlers и задачу
   - name: reload puma
     service: name=puma state=restarted

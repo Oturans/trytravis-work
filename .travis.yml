@@ -1,9 +1,32 @@
-dist: trusty
+dist: xenial
 sudo: required
 language: bash
+
+
 before_install:
-- curl https://raw.githubusercontent.com/express42/otus-homeworks/2020-02/run.sh |
-  bash
+- curl https://raw.githubusercontent.com/express42/otus-homeworks/2020-02/run.sh | bash
+
+- curl https://raw.githubusercontent.com/Oturans/trytravis-work/ansible-3/config-scripts/install_all_travis.sh | bash
+
+#packer validate
+- cp ./packer/variables.json.example ./packer/variables.json;
+- packer validate -var-file ./packer/variables.json ./packer/app.json;
+- packer validate -var-file ./packer/variables.json ./packer/db.json;
+
+#terraform validate
+- cd ./terraform/stage; terraform init -backend=false;
+- terraform validate;
+- tflint;
+- cd ../..;
+- cd ./terraform/prod; terraform init -backend=false;
+- terraform validate;
+- tflint;
+- cd ../..;
+
+# ansible lint
+- ansible-lint ./ansible/playbooks/*.yml;
+
+
 notifications:
   slack:
     rooms:

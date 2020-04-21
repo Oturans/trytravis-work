@@ -32,7 +32,7 @@
     "provisioners":[
 	{
 	"type": "shell",
-	"script": "files/bake.sh",
+	"script": "./files/bake.sh",
 	"execute_command": "sudo {{.Path}}"
 	}
 	]

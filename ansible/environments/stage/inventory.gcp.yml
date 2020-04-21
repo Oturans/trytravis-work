@@ -1,0 +1,13 @@
+plugin: gcp_compute
+projects:
+  - infra-270920
+zones:
+  - europe-west1-d
+filters: []
+auth_kind: serviceaccount
+service_account_file: ../../../.gcp/infra.json 
+groups:
+  app: "'app' in name"
+  db: "'db' in name"
+compose:
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIPssConfigs[0].natIP[0].natIPssConfigs[0].natIP

@@ -11,12 +11,12 @@ provider "google" {
   region  = var.region
 }
 
-resource "google_compute_project_metadata" "ssh-keys" {
-  metadata = {
-    ssh-keys = "appuser:${file(var.public_key_path)}appuser1:${file(var.public_key_path)}appuser2:${file(var.public_key_path)}"
-  }
-  project = var.project
-}
+# resource "google_compute_project_metadata" "ssh-keys" {
+#   metadata = {
+#     ssh-keys = "appuser:${file(var.public_key_path)}appuser1:${file(var.public_key_path)}appuser2:${file(var.public_key_path)}"
+#   }
+#   project = var.project
+# }
 
 module "app" {
   source           = "../modules/app"
