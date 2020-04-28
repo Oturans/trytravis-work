@@ -1,7 +1,10 @@
 - name: Install mondoDB
   hosts: all
   become: true
+  roles:
+    - ../roles/db
   vars:
+    mongo_bind_ip: 0.0.0.0
   tasks:
     - name: Add key
       apt_key:
@@ -26,15 +29,18 @@
 
     - name: Install mongodb
       apt:
+        force_apt_get: yes
         name: mongodb-org
-        state: present
+        install_recommends: yes
+        allow_unauthenticated: yes
+        state: latest
 
     - name: start puma
       systemd:
-        name: mongodb
+        name: mongod
         state: started
 
     - name: enable puma
       systemd:
-        name: mongodb
+        name: mongod
         enabled: yes

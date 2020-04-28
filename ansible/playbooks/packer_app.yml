@@ -2,6 +2,8 @@
 - name: Install Ruby && Bundler
   hosts: all
   become: true
+  roles:
+    - ../roles/app
   tasks:
   # Установим в цикле все зависимости
   - name: Install ruby
@@ -13,3 +15,4 @@
       - "ruby-bundler"
       - "build-essential"
       - "python-apt"
+

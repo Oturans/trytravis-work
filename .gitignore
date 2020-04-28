@@ -15,4 +15,5 @@ vault.key
 .molecule
 .cache
 .pytest_cache
-D
+# Virtual env
+venv
