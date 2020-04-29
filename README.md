@@ -521,6 +521,7 @@ def test_tcp_port_27020(host):
 packer_app.yml, все работает!
 
 
+
 [21]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-4/ansible/Vagrantfile
 [22]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-4/ansible/playbooks/base.yml
 [23]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_infra/ansible-4/ansible/roles/db/tasks/install_mongo.yml
