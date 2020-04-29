@@ -1,0 +1,33 @@
+dist: xenial
+sudo: required
+language: bash
+
+
+before_install:
+- curl https://raw.githubusercontent.com/express42/otus-homeworks/2020-02/run.sh | bash
+
+# - curl https://raw.githubusercontent.com/Oturans/trytravis-work/ansible-3/config-scripts/install_all_travis.sh | bash
+
+# #packer validate
+# - cp ./packer/variables.json.example ./packer/variables.json;
+# - packer validate -var-file ./packer/variables.json ./packer/app.json;
+# - packer validate -var-file ./packer/variables.json ./packer/db.json;
+
+# #terraform validate
+# - cd ./terraform/stage; terraform init -backend=false;
+# - terraform validate;
+# - tflint;
+# - cd ../..;
+# - cd ./terraform/prod; terraform init -backend=false;
+# - terraform validate;
+# - tflint;
+# - cd ../..;
+
+# # ansible lint
+# - ansible-lint -x metadata ./ansible/playbooks/*.yml ;
+
+
+notifications:
+  slack:
+    rooms:
+      secure: H6qr6EgPfkrmLHBPp8pHy/QceXx5UwaDHhcdYiVfqnrvyeeoWI8qTyGEbecxnmO6tuQYF00iAEcelrSeCedOJsv7FU/LftSA6A8M0vNrrHsUPvwj66OhqcUAcsxQ3A7ZO2SkpiPRr4WPWl+QkXQ8o8+0DKd2tNndfNeytXJ+WGaSE4lTaeDr4y6tldRuvZFchahz67uAtMUhKb+99Wkj915iv6hL97ZVMH+vR/4Oulzbxf7M6PKQ+wpHkbgjiMFxXNl2kVoXE/xMLrEkcWCeUnKTU2Hyx5o2zDXSmkAlKivm65VGo7nnto2N8DKHMxFMKJNmT04YvbWxf2dwnr2weYDN8wK4TEiYIKJAlgCytj7QkogcNwDjo2h/AchJf9U8x39zyVfXpDghKT5EXypv7mxNgGcKmmBjLDesUm+ZXxvrX/jQ/ICkAiTXk1UW/8MuxXaHyA4g14ptN+/WJ+tf1rHz+kEIcqGISaLv0YNpQoODMovOtVLjPDV7yaQhCK9BkMmSKLbWBtlt31S2g8pFqeCvz5ADOLI3SzC1Jl8GdMldQg2/4uv4npg7eNIBxrU/t+xPR4+aAHxUmV0tRLpGLoRUaXwhfLPSSpCtGHE3NFCwpX+QB/Xu3e9EBPh2gC1MfmybZ4B8HrvMVjw465SbakrHn3lqpvnI8DD7WlC05tU=
