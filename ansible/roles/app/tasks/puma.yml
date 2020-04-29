@@ -15,6 +15,6 @@
     group: "{{ deploy_user }}"
 
 - name: enable puma
-  systemd: 
+  systemd:
     name: puma
     enabled: yes

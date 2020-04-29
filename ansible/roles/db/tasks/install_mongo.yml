@@ -31,7 +31,7 @@
     name: mongodb-org
     install_recommends: yes
     allow_unauthenticated: yes
-    state: latest
+    state: present
   tags: install
 
 - name: start mongod
