@@ -1,0 +1,2 @@
+[docker]
+dockerserver ansible_host=34.77.128.236

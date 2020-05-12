@@ -1,0 +1,20 @@
+---
+- name: "Install Docker"
+  become: true
+  hosts: all
+  vars:
+    app_image: "oturans/otus-reddit:1.0"
+  tasks:
+  - name: Pull image app
+    docker_image:
+      name: "{{ app_image }}"
+      source: pull
+
+  - name: Create container
+    docker_container:
+      name: "docker-reddit-app"
+      image: "{{ app_image }}"
+      state: started  # запустить
+      detach: true   # в фоне
+      network_mode: host # сеть хоста
+      recreate: yes # каждый раз пересоздавать
