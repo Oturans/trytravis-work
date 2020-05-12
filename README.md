@@ -20,7 +20,7 @@ Oturans microservices repository
     **docker inspect** - побробная инфорамция о контейнере/образе (docker inspect <u_container_id>).  
 3. **Задание со \*** docker inspect - описание в файле **docker-monolith/docker-1.log**
 4. Создали новый проект в GCP  и настроили авторизацию в gcloud с json
-5. Расмотрели работу с **docker-machine**
+5. Расмотрели работу с **docker-machine**  
    Подняли в gcp - **docker-host**
    ```
     docker-machine create --driver google \
@@ -30,7 +30,7 @@ Oturans microservices repository
         --google-project docker-275905 \
         docker-host
    ```
-   **eval $(docker-machine env docker-host)** - переключение на созданную виртуальную машину в gcp
+   **eval $(docker-machine env docker-host)** - переключение на созданную виртуальную машину в gcp  
    **eval $(docker-machine env --unset)** - переключения на рабочую машину
 6. **И сравните сами вывод:**
 
@@ -43,7 +43,7 @@ Oturans microservices repository
 
 ### Dockerfile
 
-7. В репозитори создали папку **docker-monolith**
+7. В репозитори создали папку **docker-monolith**  
     В папке 3 файла следующего содержимого
     **Dockerfile**
 
@@ -102,10 +102,10 @@ Oturans microservices repository
     Проект в ./ansible
     DI настроено, можно посмотреть [inventory.gcp.yml][4]
 
-        3 playbook:
-        [**docker_packer.yml**][5] - установка docker
-        [**docker_deploy.yml**][6] - поднятие oturans/otus-reddit:1.0 в docker
-        [**docker_main.yml**][7] - общий playbook накатывающий оба предыдущих
+        3 playbook:  
+        [**docker_packer.yml**][5] - установка docker  
+        [**docker_deploy.yml**][6] - поднятие oturans/otus-reddit:1.0 в docker  
+        [**docker_main.yml**][7] - общий playbook накатывающий оба предыдущих  
 
         запуск **ansible-playbook docker_main.yml --limit docker_machine**
 
