@@ -1,0 +1,7 @@
+project          = "docker-XXXXXX"
+zone             = "europe-west1-b"
+public_key_path  = "XXXXXX"
+disk_image       = "ubuntu-1604-lts"
+private_key_path = "XXXXXX"
+machine_type     = "g1-small"
+ncount           = "1"
