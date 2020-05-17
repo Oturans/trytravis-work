@@ -169,5 +169,5 @@ Oturans microservices repository
         -v reddit_db:/data/db mongo:latest
     ```
 
-[8]: https://hub.docker.com/repository/docker/oturans/ui
+[8]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-3/src/ui/Dockerfile.1
 [9]: https://hub.docker.com/repository/docker/oturans/ui
