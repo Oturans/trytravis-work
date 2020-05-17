@@ -116,3 +116,58 @@ Oturans microservices repository
 [5]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-2/docker-monolith/infra/ansible/docker_packer.yml
 [6]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-2/docker-monolith/infra/ansible/docker_deploy.yml
 [7]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-2/docker-monolith/infra/ansible/docker_main.yml
+
+## Docker-3
+
+1. Создан каталог src в него скопировано наше приложение.  
+2. Собраны 3 образа  
+    oturans/post:1.0  (./post/Dockerfile)  
+    oturans/comment:1.0 (./comment/Dockerfile)  
+    oturans/ui:1.0  (./ui/Dockerfile)  
+
+    ```
+    docker build -t oturans/post:1.0 ./post-py
+    docker build -t oturans/comment:1.0 ./comment
+    docker build -t oturans/ui:1.0 ./ui
+    ```
+
+3. Создали bridge-сеть reddit  
+   ```
+   docker network create reddit
+   ```
+
+4. **Задание со \*** запуск с другими сетевыми алиасами, без пересборки  
+    ```
+    docker run -d --network=reddit \
+        --network-alias=post_db_test \
+        --network-alias=comment_db_test \
+        -v reddit_db:/data/db mongo:latest
+
+    docker run -d --network=reddit \
+        --env POST_DATABASE=posts_test \
+        --env POST_DATABASE_HOST=post_db_test \
+        --network-alias=posts_test oturans/post:1.0
+
+    docker run -d --network=reddit \
+        --env COMMENT_DATABASE=comments_test \
+        --env COMMENT_DATABASE_HOST=comment_db_test \
+        --network-alias=comments_test oturans/comment:1.0
+
+    docker run -d --network=reddit \
+        --env POST_SERVICE_HOST=posts_test \
+        --env COMMENT_SERVICE_HOST=comments_test \
+        -p 9292:9292 oturans/ui:5.0
+    ```
+5. **Задание со \*** Пересборка ui образа на alpine  
+    Пересобрали можно посмотреть [Dockerfile][8] итоговый образ залит на [Docker HUB][9]  
+6. Создали volume и подключили к образу  
+    ```
+    docker volume create reddit_db
+    docker run -d --network=reddit \
+        --network-alias=post_db_test \
+        --network-alias=comment_db_test \
+        -v reddit_db:/data/db mongo:latest
+    ```
+
+[8]: https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-3/src/ui/Dockerfile.1
+[9]: https://hub.docker.com/repository/docker/oturans/ui
