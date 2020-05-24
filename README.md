@@ -256,3 +256,35 @@ docker-compose up -d
 [10]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-4/src/docker-compose.yml
 [11]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-4/src/.env.example
 [12]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-4/src/docker-compose.override.yml
+
+
+## Gitlab-ci-1
+
+
+1. Создаем сервер для работы посредством docker-machine
+```
+docker-machine create --driver google \
+     --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
+     --google-machine-type n1-standard-1\
+     --google-zone europe-west1-b \
+     --google-project docker-275905 \
+     --google-disk-size 100 \
+     --google-disk-type pd-ssd \
+     docker-host-ci
+```
+2. Добавляем правила Firewall
+```
+gcloud compute firewall-rules create docker-machine-ci \
+        --allow tcp:80,tcp:443 \
+        --target-tags=docker-machine-ci \
+        --description="Allow 80, 443 connections" \
+        --direction=INGRESS
+```
+3. Подготовим ВМ для запуска Gitlab-ci
+```
+docker-machine ssh docker-host-ci
+sudo mkdir -p /srv/gitlab/config /srv/gitlab/data /srv/gitlab/logs
+cd /srv/gitlab/
+sudo touch docker-compose.yml
+
+```
