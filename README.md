@@ -224,6 +224,9 @@ docker run -d --network=reddit -p 9292:9292 oturans/ui:5.0
 #### Docker-compose
 
 6. Подымаем наши конктейнеры с помошью Docker-compose, Предварительно настроив [**docker-compose.yml**][10] и переменные окружения [**.env.example**][11]
+    ```
+    docker-compose up -d
+    ```
 
 7. Базовое имя проекта формируется из
 "Директория в которой лежит docker-compose" 
@@ -250,6 +253,6 @@ docker-machine scp -r UI/ docker-host:/home/docker-user/ui
 
 docker-compose up -d
 ```
-[10]:https:\\test.test
-[11]:https:\\test.test
-[12]:https:\\test.test
+[10]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-4/src/docker-compose.yml
+[11]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-4/src/.env.example
+[12]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-4/src/docker-compose.override.yml
