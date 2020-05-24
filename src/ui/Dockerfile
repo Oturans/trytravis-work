@@ -6,8 +6,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 ENV APP_HOME /app
-RUN mkdir $APP_HOME
-
 WORKDIR $APP_HOME
 COPY Gemfile* $APP_HOME/
 RUN bundle install

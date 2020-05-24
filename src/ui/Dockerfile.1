@@ -4,8 +4,6 @@ RUN apk add --update --no-cache ruby-full ruby-dev alpine-sdk \
     && rm -rf /var/cache/apk/*
 
 ENV APP_HOME /app
-RUN mkdir $APP_HOME
-
 WORKDIR $APP_HOME
 COPY Gemfile* $APP_HOME/
 RUN bundle install
