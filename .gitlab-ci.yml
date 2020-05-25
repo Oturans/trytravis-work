@@ -17,10 +17,10 @@ before_script:
     - bundle install
 
 build_job:
-    image: oturans/docker:1.0
+    image: docker:19.03.8-dind
     stage: build
     services: 
-        - oturans/docker:1.0
+        - docker:19.03.8-dind
     script:
         - echo 'Building'    
         - echo $CI_PROJECT_DIR
