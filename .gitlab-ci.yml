@@ -19,8 +19,7 @@ before_script:
     - apt-key fingerprint 0EBFCD88
     - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
     - apt-get update
-    - apt-get -y install docker-ce  containerd.io
-    - systemctl status docker
+    - apt-get -y install docker-ce 
     - docker --version
 
 build_job:
