@@ -12,21 +12,21 @@ variables:
 before_script:
     - cd reddit
     - bundle install
-    - cd $CI_PROJECT_DIR
-    - apt-get update
-    - apt-get -y install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-    - curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-    - apt-key fingerprint 0EBFCD88
-    - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
-    - apt-get update
-    - apt-get -y install docker-ce 
-    - docker --version
 
 build_job:
     stage: build
+    services: 
+        - ubuntu:16.04
     script:
         - echo 'Building'    
         - echo $CI_PROJECT_DIR
+        - apt-get update
+        - apt-get install  -y  apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+        - apt-key fingerprint 0EBFCD88
+        - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+        - apt-get update
+        - apt-get install -y docker-ce docker-ce-cli containerd.io
         - cd $CI_PROJECT_DIR/docker-monolith
         - docker build --no-cache --rm --force-rm -t oturans/reddit:$CI_COMMIT_REF_NAME -f Dockerfile .
 

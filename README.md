@@ -288,3 +288,7 @@ cd /srv/gitlab/
 sudo touch docker-compose.yml
 
 ```
+
+
+Настроена интеграция Gitlab - Slack канал: #andrey_protasovitskiy
+Ссылка: https://devops-team-otus.slack.com/archives/CVA8AQ5RV
