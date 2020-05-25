@@ -20,7 +20,8 @@ before_script:
     - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
     - apt-get update
     - apt-get -y install docker-ce
-    - docker info
+    - systemctl restart docker
+    - docker --version
 
 build_job:
     stage: build
