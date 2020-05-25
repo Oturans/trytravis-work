@@ -22,7 +22,7 @@ build_job:
         - echo 'Building'    
         - echo $CI_PROJECT_DIR
         - cd $CI_PROJECT_DIR/docker-monolith
-        - docker build --no-cache --rm --force-rm -t oturans/reddit:$CI_COMMIT_REF_NAME -f Dockerfile .
+        - docker build -t oturans/reddit:$CI_COMMIT_REF_NAME .
 
 test_unit_job:
     stage: test
