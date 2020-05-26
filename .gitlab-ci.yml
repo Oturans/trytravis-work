@@ -12,8 +12,8 @@ variables:
     DATABASE_URL: 'mongodb://mongo/user_posts'
 
 build_job:
-    image: docker:19.03.1
-    stage: build
+    image: docker:19.03.8
+    stage: build  
     before_script:
       - docker info
       - docker login -u $LOGIN_DH -p $PASSWORD_DH
