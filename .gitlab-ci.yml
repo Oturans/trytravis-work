@@ -18,6 +18,7 @@ services:
   
 build_job:
     stage: build 
+    image: docker:19.03
     before_script:
       - docker info
       - docker login -u $LOGIN_DH -p $PASSWORD_DH
