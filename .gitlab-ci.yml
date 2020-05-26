@@ -15,7 +15,7 @@ variables:
 build_job:
     stage: build  
     image: docker:stable-dind
-    service: docker:stable-dind
+    services: docker:stable-dind
     before_script:
       - docker info
       - echo $CI_PROJECT_DIR
@@ -24,7 +24,9 @@ build_job:
     script:
       - echo 'Building'
       - cd $CI_PROJECT_DIR/docker-monolith
+      - docker login -u $LOGIN_DH -p $PASSWORD_DH
       - docker build -t oturans/reddit:$CI_COMMIT_SHORT_SHA .
+      - docker push $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA
 
 test_unit_job:
 
