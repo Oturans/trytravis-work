@@ -15,7 +15,8 @@ variables:
 build_job:
     stage: build  
     image: docker:stable-dind
-    services: docker:stable-dind
+    services: 
+        - docker:stable-dind
     before_script:
       - docker info
       - echo $CI_PROJECT_DIR
