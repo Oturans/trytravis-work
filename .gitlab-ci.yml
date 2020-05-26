@@ -21,6 +21,9 @@ build_job:
     before_script:
       - cd reddit
     script:
+      - echo 'Building'
+      - echo $CI_PROJECT_DIR
+      - cd $CI_PROJECT_DIR/docker-monolith
       - docker build -t $LOGIN_DH/reddit:$CI_COMMIT_VERSION .
       - docker login -u $LOGIN_DH -p $PASSWORD_DH
       - docker push $LOGIN_DH/reddit:$CI_COMMIT_VERSION
