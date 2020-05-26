@@ -1,3 +1,4 @@
+image: ruby:2.4.2
 stages:
     - build
     - test
@@ -15,7 +16,7 @@ build_job:
     image: docker:19.03.8-dind
     stage: build  
     services:
-        - mongo:latest
+        - docker:19.03.8-dind
     before_script:
       - docker info
       - docker login -u $LOGIN_DH -p $PASSWORD_DH
@@ -29,7 +30,7 @@ build_job:
       - docker push $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA
 
 test_unit_job:
-    image: ruby:2.4.2
+
     stage: test
     services:
         - mongo:latest
