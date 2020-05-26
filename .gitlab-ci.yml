@@ -9,18 +9,18 @@ stages:
 
     
 variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: "/certs"
     DATABASE_URL: 'mongodb://mongo/user_posts'    
 
-services:
-    - docker:19.03-dind
   
 build_job:
     stage: build 
-    image: docker:19.03
+    image: docker:18.09
     variables:
-        DOCKER_TLS_CERTDIR: ""
+        DOCKER_HOST: tcp://docker:2375/
+        DOCKER_DRIVER: overlay2
+    services:
+        - docker:18.09-dind
+        
     before_script:
       - docker info
       - docker login -u $LOGIN_DH -p $PASSWORD_DH
