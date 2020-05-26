@@ -16,14 +16,14 @@ build_job:
     stage: build  
     image: docker:19.03.8-dind
     before_script:
-      - sudo docker info
+      - docker info
       - echo $CI_PROJECT_DIR
       - echo $CI_COMMIT_SHORT_SHA   
 
     script:
       - echo 'Building'
       - cd $CI_PROJECT_DIR/docker-monolith
-      - sudo docker build -t oturans/reddit:$CI_COMMIT_SHORT_SHA .
+      - docker build -t oturans/reddit:$CI_COMMIT_SHORT_SHA .
 
 test_unit_job:
 
