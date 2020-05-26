@@ -12,7 +12,7 @@ variables:
     DATABASE_URL: 'mongodb://mongo/user_posts'
 
 build_job:
-    image: docker:19.03.8
+    image: docker:19.03.8-dind
     stage: build  
     before_script:
       - docker info
