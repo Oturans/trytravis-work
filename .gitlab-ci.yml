@@ -23,10 +23,11 @@ build_job:
     script:
       - echo 'Building'
       - echo $CI_PROJECT_DIR
+      - echo $CI_COMMIT_VERSION 
       - cd $CI_PROJECT_DIR/docker-monolith
-      - docker build -t $LOGIN_DH/reddit:$CI_COMMIT_VERSION .
+      - docker build -t $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA .
       - docker login -u $LOGIN_DH -p $PASSWORD_DH
-      - docker push $LOGIN_DH/reddit:$CI_COMMIT_VERSION
+      - docker push $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA
 
 test_unit_job:
     stage: test
