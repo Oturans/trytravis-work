@@ -8,7 +8,7 @@ stages:
     - production
 
 variables:
-    DOCKER_HOST: tcp://docker:2375
+    DOCKER_HOST: tcp://docker:2376
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
     DATABASE_URL: 'mongodb://mongo/user_posts'
@@ -17,7 +17,7 @@ build_job:
     stage: build  
     image: docker:stable-dind
     services: 
-        - docker:18-dind
+        - docker:stable-dind
     before_script:
       - docker login -u $LOGIN_DH -p $PASSWORD_DH
       - docker info
