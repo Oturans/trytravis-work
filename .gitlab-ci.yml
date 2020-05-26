@@ -19,10 +19,10 @@ before_script:
 build_job:
     image: docker:19.03.1
     stage: build
-    services:
-      - docker:dind
     before_script:
       - cd reddit
+      - docker --version
+      
     script:
       - echo 'Building'
       - echo $CI_PROJECT_DIR
