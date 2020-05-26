@@ -9,6 +9,7 @@ stages:
 
     
 variables:
+    DOCKER_TLS_CERTDIR: ""
     DATABASE_URL: 'mongodb://mongo/user_posts'    
 
 
@@ -16,6 +17,7 @@ build_job:
     stage: build  
     image: docker:18.09
     variables:
+        DOCKER_TLS_CERTDIR: ""
         DOCKER_HOST: tcp://docker:2375/
         DOCKER_DRIVER: overlay2
     services:
