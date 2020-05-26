@@ -8,9 +8,6 @@ stages:
     - production
 
 variables:
-    DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_CERTDIR: ""
-    DOCKER_DRIVER: overlay2
     DATABASE_URL: 'mongodb://mongo/user_posts'
 
 build_job:
