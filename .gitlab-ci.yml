@@ -6,20 +6,24 @@ stages:
     - production
 
 variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
     DATABASE_URL: 'mongodb://mongo/user_posts'
 
 build_job:
     image: docker:19.03.1
     stage: build
     before_script:
-      - docker --version
-    script:
-      - echo 'Building'
+      - docker info
+      - docker login -u $LOGIN_DH -p $PASSWORD_DH
       - echo $CI_PROJECT_DIR
       - echo $CI_COMMIT_SHORT_SHA 
+
+    script:
+      - echo 'Building'
       - cd $CI_PROJECT_DIR/docker-monolith
       - docker build -t $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA .
-      - docker login -u $LOGIN_DH -p $PASSWORD_DH
       - docker push $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA
 
 test_unit_job:
