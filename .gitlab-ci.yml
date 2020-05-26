@@ -13,21 +13,17 @@ variables:
     DATABASE_URL: 'mongodb://mongo/user_posts'
 
 build_job:
-    image: docker:19.03.8-dind
     stage: build  
-    services:
-        - docker:19.03.8-dind
+    image: docker:19.03.8-dind
     before_script:
-      - docker info
-      - docker login -u $LOGIN_DH -p $PASSWORD_DH
+      - sudo docker info
       - echo $CI_PROJECT_DIR
       - echo $CI_COMMIT_SHORT_SHA   
 
     script:
       - echo 'Building'
       - cd $CI_PROJECT_DIR/docker-monolith
-      - docker build -t $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA .
-      - docker push $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA
+      - sudo docker build -t oturans/reddit:$CI_COMMIT_SHORT_SHA .
 
 test_unit_job:
 
