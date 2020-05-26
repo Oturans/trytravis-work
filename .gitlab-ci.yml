@@ -1,6 +1,4 @@
 image: ruby:2.4.2
-services: 
-    - docker:stable-dind
 
 stages:
     - build
@@ -17,9 +15,12 @@ variables:
 
 build_job:
     stage: build  
-    image: docker:stable-dind
+    image: docker:18-dind
+    services: 
+        - docker:18-dind
 
     before_script:
+      - docker login -u $LOGIN_DH -p $PASSWORD_DH
       - docker info
       - echo $CI_PROJECT_DIR
       - echo $CI_COMMIT_SHORT_SHA   
@@ -27,7 +28,6 @@ build_job:
     script:
       - echo 'Building'
       - cd $CI_PROJECT_DIR/docker-monolith
-      - docker login -u $LOGIN_DH -p $PASSWORD_DH
       - docker build -t oturans/reddit:$CI_COMMIT_SHORT_SHA .
       - docker push $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA
 
