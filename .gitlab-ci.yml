@@ -1,0 +1,80 @@
+image: ruby:2.4.2
+
+stages:
+    - build
+    - test
+    - review
+    - stage
+    - production
+
+    
+variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: "/certs"
+    DATABASE_URL: 'mongodb://mongo/user_posts'    
+
+services:
+    - docker:19.03-dind
+  
+build_job:
+    stage: build 
+    image: docker:19.03
+    before_script:
+      - docker info
+      - docker login -u $LOGIN_DH -p $PASSWORD_DH
+      - echo $CI_PROJECT_DIR
+      - echo $CI_COMMIT_SHORT_SHA   
+
+    script:
+      - echo 'Building'
+      - cd $CI_PROJECT_DIR/docker-monolith
+      - docker build -t oturans/reddit:$CI_COMMIT_SHORT_SHA .
+      - docker push $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA
+
+test_unit_job:
+
+    stage: test
+    services:
+        - mongo:latest
+    script:
+        - cd reddit
+        - bundle install
+        - ruby simpletest.rb
+
+test_integration_job:
+    stage: test
+    script:
+        - echo 'Testing 2'
+
+branch review:
+    stage: review
+    script: echo "Deploy to $CI_ENVIRONMENT_SLUG"
+    environment:
+        name: branch/$CI_COMMIT_REF_NAME
+        url: http://$CI_ENVIRONMENT_SLUG.example.com
+    only:
+        - branches
+    except:
+        - master
+
+staging:
+    stage: stage
+    when: manual
+    script:
+        - echo 'Deploy'
+    only:
+        - /^\d+\.\d+\.\d+/
+    environment:
+        name: stage
+        url: https://beta.example.com
+
+production:
+    stage: production
+    when: manual
+    only:
+        - /^\d+\.\d+\.\d+/
+    script:
+        - echo 'Deploy'
+    environment:
+        name: production
+        url: https://example.com

@@ -256,3 +256,99 @@ docker-compose up -d
 [10]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-4/src/docker-compose.yml
 [11]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-4/src/.env.example
 [12]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/docker-4/src/docker-compose.override.yml
+
+
+## Gitlab-ci-1
+
+1. Создали сервер для работы с Gitlab-CI посредством docker-machine  
+
+```
+docker-machine create --driver google \
+     --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
+     --google-machine-type n1-standard-1\
+     --google-zone europe-west1-b \
+     --google-project docker-275905 \
+     --google-disk-size 100 \
+     --google-disk-type pd-ssd \
+     --google-open-port 22/tcp \
+     --google-open-port 80/tcp \
+     --google-open-port 443/tcp \
+     docker-host-ci
+```
+
+2. Подготовили ВМ для запуска Gitlab-ci  
+
+```
+docker-machine ssh docker-host-ci "sudo mkdir -p /srv/gitlab/config /srv/gitlab/data /srv/gitlab/logs"
+
+```
+
+3. Создаем в репозитории ./gitlab-ci файл [**docker-compose.yml**][13], где в путь external_url подcтавляем ip выданный **docker-machine ip docker-host-ci**  
+4. Подняли контейнер Gitlab-ci посредством **docker-compose up -d** предварительно настроив среду **eval $(docker-machine env docker-host-ci)**
+5. Создали проект, настроили piplines [**.gitlab-ci.yml**][14]  
+6. Подключили внешний репозиторий к проекту **git remote add gitlab http://$(docker-machine ip docker-host-ci)/homework/example.git**  
+7. Подняли Gitlab-runner так же в docker контейнере и зарегистрировали  
+
+```
+docker run -d --name gitlab-runner --restart always \
+-v /srv/gitlab-runner/config:/etc/gitlab-runner \
+-v /var/run/docker.sock:/var/run/docker.sock \
+gitlab/gitlab-runner:latest
+
+docker exec -it gitlab-runner gitlab-runner register  \
+ --non-interactive \
+  --executor "docker" \
+  --docker-image alpine:latest \
+  --url "http://<your-vm-ip>/" \
+  --registration-token "<your-token-in-project> \
+  --description "--docker-runner--" \
+  --tag-list "linux,xenial,ubuntu,docker" \
+  --run-untagged="true" \
+  --locked="false" \
+  --access-level="not_protected" \
+  --docker-privileged \       ####<----------------------важные пункты без этого DIND работать не будет!!!
+  --docker-volumes "/certs/client" ####<-----------------важные пункты без этого DIND работать не будет!!!
+```
+
+8. Сделали коммиты проверили что все работает   
+9. **Задание со \*** В блок Build добавлена сборка контейнера с приложением reddit и его загрузку в docker hub  
+    https://hub.docker.com/repository/docker/oturans/reddit/general  
+
+
+```
+services:
+    - docker:19.03-dind
+  
+build_job:
+    stage: build 
+    image: docker:19.03
+    before_script:
+      - docker info
+      - docker login -u $LOGIN_DH -p $PASSWORD_DH
+
+    script:
+      - echo 'Building'
+      - cd $CI_PROJECT_DIR/docker-monolith
+      - docker build -t oturans/reddit:$CI_COMMIT_SHORT_SHA .
+      - docker push $LOGIN_DH/reddit:$CI_COMMIT_SHORT_SHA
+```
+Для работы в последних images docker необходимо регистрировать gitlab runner c ключами:
+
+  ```
+  --docker-privileged
+  --docker-volumes "/certs/client"
+  ```
+
+Далее посредством посдетсовм того же docker-machine можно настроить разворачивание, аналогично тому как мы создали машину для работы по ДЗ.  
+
+Переменные **$LOGIN_DH $PASSWORD_DH** заданы через **variables**  
+
+1.   **Задание со \*** Вариант разворачивания Gitlab-runner через bash и docker-machine [**Gitlab-Runner-install.sh**][15]  
+2.   **Задание со \***  Настроена интеграция Gitlab - Slack канал:  
+      #andrey_protasovitskiy  
+Ссылка: https://devops-team-otus.slack.com/archives/CVA8AQ5RV  
+
+
+[13]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/gitlab-ci/docker-compose.yml
+[14]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/.gitlab-ci.yml
+[15]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/gitlab-ci/Gitlab-Runner-install.sh
