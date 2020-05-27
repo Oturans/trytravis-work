@@ -277,6 +277,7 @@ docker-machine create --driver google \
 ```
 
 2. Подготовили ВМ для запуска Gitlab-ci  
+
 ```
 docker-machine ssh docker-host-ci "sudo mkdir -p /srv/gitlab/config /srv/gitlab/data /srv/gitlab/logs"
 
@@ -310,7 +311,9 @@ docker exec -it gitlab-runner gitlab-runner register  \
 ```
 
 8. Сделали коммиты проверили что все работает   
-9. **Задание со \*** В блок Build добавлена сборка контейнера с приложением reddit и его загрузку в docker hub
+9. **Задание со \*** В блок Build добавлена сборка контейнера с приложением reddit и его загрузку в docker hub  
+    https://hub.docker.com/repository/docker/oturans/reddit/general  
+
 
 ```
 services:
@@ -336,16 +339,16 @@ build_job:
   --docker-volumes "/certs/client"
   ```
 
-Далее посредством посдетсовм того тоже docker-machine можно настроить разворачивание, аналогично тому как мы создали машину для работы по ДЗ.  
+Далее посредством посдетсовм того же docker-machine можно настроить разворачивание, аналогично тому как мы создали машину для работы по ДЗ.  
 
 Переменные **$LOGIN_DH $PASSWORD_DH** заданы через **variables**  
 
-10.  **Задание со \*** Вариант разворачивания Gitlab-runner через bash и docker-machine [**Gitlab-Runner-install.sh**][15]  
-11.  **Задание со \***  Настроена интеграция Gitlab - Slack канал:  
+1.   **Задание со \*** Вариант разворачивания Gitlab-runner через bash и docker-machine [**Gitlab-Runner-install.sh**][15]  
+2.   **Задание со \***  Настроена интеграция Gitlab - Slack канал:  
       #andrey_protasovitskiy  
 Ссылка: https://devops-team-otus.slack.com/archives/CVA8AQ5RV  
 
 
-[13]:https://devops-team-otus.slack.com/archives/CVA8AQ5RV
-[14]:https://devops-team-otus.slack.com/archives/CVA8AQ5RV
-[15]:https://devops-team-otus.slack.com/archives/CVA8AQ5RV
+[13]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/gitlab-ci/docker-compose.yml
+[14]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/.gitlab-ci.yml
+[15]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/gitlab-ci/Gitlab-Runner-install.sh
