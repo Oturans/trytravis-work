@@ -1,6 +1,9 @@
 # Oturans_microservices
 Oturans microservices repository
 
+[![Build Status](https://travis-ci.com/Otus-DevOps-2020-02/Oturans_microservices.svg?branch=master)](https://travis-ci.com/Otus-DevOps-2020-02/Oturans_microservices)
+
+
 ## Docker-2
 
 1. Установили docker на рабочую среду.
@@ -343,8 +346,8 @@ build_job:
 
 Переменные **$LOGIN_DH $PASSWORD_DH** заданы через **variables**  
 
-1.   **Задание со \*** Вариант разворачивания Gitlab-runner через bash и docker-machine [**Gitlab-Runner-install.sh**][15]  
-2.   **Задание со \***  Настроена интеграция Gitlab - Slack канал:  
+10.   **Задание со \*** Вариант разворачивания Gitlab-runner через bash и docker-machine [**Gitlab-Runner-install.sh**][15]  
+11.   **Задание со \***  Настроена интеграция Gitlab - Slack канал:  
       #andrey_protasovitskiy  
 Ссылка: https://devops-team-otus.slack.com/archives/CVA8AQ5RV  
 
@@ -352,3 +355,5 @@ build_job:
 [13]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/gitlab-ci/docker-compose.yml
 [14]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/.gitlab-ci.yml
 [15]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/gitlab-ci/Gitlab-Runner-install.sh
+
+## Monitoring-1
