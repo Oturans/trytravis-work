@@ -38,4 +38,4 @@ push-blackbox:
 	docker push ${USER_NAME}/blackbox
 
 push-prometheus:
-	docker push ${USER_NAME}/ui
+	docker push ${USER_NAME}/prometheus
