@@ -420,6 +420,8 @@ docker-machine create --driver google \
         static_configs:
             - targets:
                 - http://ui:9292
+                - http://comment:9292
+                - http://post:5000
 
         relabel_configs:
           - source_labels: [__address__]
@@ -437,7 +439,7 @@ docker-machine create --driver google \
             - targets:
                 - ui:9292
                 - comment:9292
-                - post_db:27017
+                - post:5000
         relabel_configs:
           - source_labels: [__address__]
             target_label: __param_target
