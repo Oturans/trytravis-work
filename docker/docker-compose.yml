@@ -63,7 +63,7 @@ services:
   mongodb-exporter:
     image: bitnami/mongodb-exporter:0.11.0
     environment:
-      - MONGODB_URI='mongodb://post_db:27017
+      - MONGODB_URI='mongodb://post_db:27017'
     networks:
       - back_net
 

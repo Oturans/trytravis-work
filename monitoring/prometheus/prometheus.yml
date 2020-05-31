@@ -17,16 +17,17 @@
         static_configs:
           - targets:
             - 'comment:9292'
-
+#--------------------------------------node-exporter
       - job_name: 'node'
         static_configs:
           - targets:
             - 'node-exporter:9100'
+#--------------------------------------mongodb_exporter
       - job_name: 'percona_mongodb_exporter'
         static_configs:
           - targets:
             - 'mongodb-exporter:9216'
- 
+#--------------------------------------blackbox
       - job_name: blackbox 
         metrics_path: /metrics
         static_configs:
