@@ -1,6 +1,9 @@
 # Oturans_microservices
 Oturans microservices repository
 
+[![Build Status](https://travis-ci.com/Otus-DevOps-2020-02/Oturans_microservices.svg?branch=master)](https://travis-ci.com/Otus-DevOps-2020-02/Oturans_microservices)
+
+
 ## Docker-2
 
 1. Установили docker на рабочую среду.
@@ -343,8 +346,8 @@ build_job:
 
 Переменные **$LOGIN_DH $PASSWORD_DH** заданы через **variables**  
 
-1.   **Задание со \*** Вариант разворачивания Gitlab-runner через bash и docker-machine [**Gitlab-Runner-install.sh**][15]  
-2.   **Задание со \***  Настроена интеграция Gitlab - Slack канал:  
+10.   **Задание со \*** Вариант разворачивания Gitlab-runner через bash и docker-machine [**Gitlab-Runner-install.sh**][15]  
+11.   **Задание со \***  Настроена интеграция Gitlab - Slack канал:  
       #andrey_protasovitskiy  
 Ссылка: https://devops-team-otus.slack.com/archives/CVA8AQ5RV  
 
@@ -352,3 +355,120 @@ build_job:
 [13]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/gitlab-ci/docker-compose.yml
 [14]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/.gitlab-ci.yml
 [15]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/gitlab-ci-1/gitlab-ci/Gitlab-Runner-install.sh
+
+## Monitoring-1
+
+1. Создаем ВМ
+```
+docker-machine create --driver google \
+     --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
+     --google-machine-type n1-standard-1\
+     --google-zone europe-west1-b \
+     --google-project docker-275905 \
+     --google-disk-size 20 \
+     --google-disk-type pd-ssd \
+     --google-open-port 9292/tcp \
+     --google-open-port 9090/tcp 
+     docker-host
+```
+
+2. Настроили сборку Docker образа Prometheus с нужным нам конфигом [./monitoring/prometheus/prometheus.yml][16]
+   ```
+    FROM prom/prometheus:v2.1.0
+    ADD prometheus.yml /etc/prometheus/
+   ```
+
+3. Настроили docker-compose для разворачивания нашего приложения + мониторинг [./docker/docker-compose.yml][17]
+4. Запушили все образы в Docker HUB 
+   https://hub.docker.com/u/oturans  
+5. **Задание со \*** В мониторинг добавлено использование **percona_mongodb_exporter**  
+   [./monitoring/prometheus/prometheus.yml:][16]  
+   ```
+    ...
+      - job_name: 'percona_mongodb_exporter'
+        static_configs:
+          - targets:
+            - 'mongodb-exporter:9216'
+    ...
+   ```
+
+   [./docker/docker-compose.yml:][17]  
+   ```
+    ...
+    mongodb-exporter:
+        image: bitnami/mongodb-exporter:0.11.0
+        environment:
+            - MONGODB_URI='mongodb://post_db:27017'
+        networks:
+            - back_net
+    ...
+   ```
+6. **Задание со \*** В мониторинг добавлено использование **blackbox-exporter**  
+   [./monitoring/prometheus/prometheus.yml:][16]  
+   ```
+   ...
+    - job_name: blackbox
+        metrics_path: /metrics
+        static_configs:
+            - targets:
+                - blackbox-exporter:9115
+
+    - job_name: blackbox_http
+        metrics_path: /probe
+        params:
+            module: [http_2xx]
+        static_configs:
+            - targets:
+                - http://ui:9292
+                - http://comment:9292
+                - http://post:5000
+
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: blackbox-exporter:9115
+
+      - job_name: 'blackbox_port_connect'
+        metrics_path: /probe
+        params:
+            module: ['tcp_connect']
+        static_configs:
+            - targets:
+                - ui:9292
+                - comment:9292
+                - post:5000
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: blackbox-exporter:9115
+   ...
+   ```
+   [./docker/docker-compose.yml:][17]  
+   ```
+   ...
+    blackbox-exporter:
+        image: ${USER_NAME}/blackbox
+        ports:
+            - '9115:9115'
+        networks:
+            - back_net
+            - front_net
+   ...
+   ```
+7. **Задание со \*** Настроен [**Makefile**][18]  
+    - Билдим любой или все образы, которые сейчас используются  
+    - Пушим  любой или все образы в докер хаб  
+    - Подымаем или останавливаем наше приложение с мониторингом  
+  P.S. Не забываем предварительно задать переменную  **export USER_NAME=<...>**  
+
+
+
+[16]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-1/monitoring/prometheus/prometheus.yml
+[17]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-1/docker/docker-compose.yml
+[18]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-1/Makefile
