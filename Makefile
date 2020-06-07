@@ -14,14 +14,14 @@ docker-start:
 	docker-machine start docker-host
 	docker-machine regenerate-certs docker-host -f
 	docker-machine ip docker-host
+	
 docker-eval:
 	eval $(docker-machine env docker-host)
 	docker ps -a
 
-
 docker-stop:
 	docker-machine stop docker-host
-	eval `docker-machine env -u`
+	eval $(docker-machine env -u)
 
 #---------------------------------------------------START
 
