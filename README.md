@@ -292,7 +292,7 @@ docker-machine ssh docker-host-ci "sudo mkdir -p /srv/gitlab/config /srv/gitlab/
 6. Подключили внешний репозиторий к проекту **git remote add gitlab http://$(docker-machine ip docker-host-ci)/homework/example.git**  
 7. Подняли Gitlab-runner так же в docker контейнере и зарегистрировали  
 
-```
+```docker
 docker run -d --name gitlab-runner --restart always \
 -v /srv/gitlab-runner/config:/etc/gitlab-runner \
 -v /var/run/docker.sock:/var/run/docker.sock \
@@ -472,3 +472,21 @@ docker-machine create --driver google \
 [16]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-1/monitoring/prometheus/prometheus.yml
 [17]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-1/docker/docker-compose.yml
 [18]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-1/Makefile
+
+# Monitoring-2
+
+1. Создаем ВМ  
+    ```
+    docker-machine create --driver google \
+    --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
+    --google-machine-type f1-micro \
+    --google-project docker-275905 \
+    --google-disk-size 40 \
+    --google-open-port 9292/tcp \
+    --google-open-port 9090/tcp \
+    --google-open-port 8080/tcp \
+    --google-open-port 3000/tcp \
+    --google-open-port 9323/tcp \
+    --google-zone europe-west1-b \
+    docker-host
+    ```
