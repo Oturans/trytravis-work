@@ -540,9 +540,9 @@ docker-machine create --driver google \
 11. **Задания со \*\*\*** Настроен Trickster и соттветсвено В grafana изменен источник данных на **http://trickster:8480**  
     [monitoring/trickster/][24]
 
-[19]:http://qwe.ru
-[20]:http://qwe.ru
-[21]:http://qwe.ru
-[22]:http://qwe.ru
-[23]:http://qwe.ru
-[24]:http://qwe.ru
+[19]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-2/docker/docker-compose-monitoring.yml
+[20]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-2/Makefile
+[21]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-2/monitoring/prometheus/alerts.yml
+[22]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-2/monitoring/prometheus/prometheus.yml
+[23]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/monitoring-2/monitoring/grafana
+[24]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/monitoring-2/monitoring/trickster
