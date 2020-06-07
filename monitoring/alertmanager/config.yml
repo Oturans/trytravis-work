@@ -1,0 +1,19 @@
+global:
+    resolve_timeout: 1m
+    slack_api_url: 'https://hooks.slack.com/services/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'
+
+route:
+    receiver: 'slack-notifications'
+  
+receivers:
+    - name: 'slack-notifications'
+      slack_configs:
+        - channel: '#andrey_protasovitskiy'
+      email_configs:
+        - to: devops202002@gmail.com
+          from: devops202002@gmail.com
+          smarthost: smtp.gmail.com:587
+          auth_username: devops202002@gmail.com
+          auth_identity: devops202002@gmail.com
+          auth_password: tM3C7ax47so5
+          send_resolved: true
