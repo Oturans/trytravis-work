@@ -1,70 +1,112 @@
 ---
-    global:
-      scrape_interval: '5s'
-    
-    scrape_configs:
-      - job_name: 'prometheus'
-        static_configs:
-          - targets:
-            - 'localhost:9090'
-    
-      - job_name: 'ui'
-        static_configs:
-          - targets:
-            - 'ui:9292'
-    
-      - job_name: 'comment'
-        static_configs:
-          - targets:
-            - 'comment:9292'
-#--------------------------------------node-exporter
-      - job_name: 'node'
-        static_configs:
-          - targets:
-            - 'node-exporter:9100'
-#--------------------------------------mongodb_exporter
-      - job_name: 'percona_mongodb_exporter'
-        static_configs:
-          - targets:
-            - 'mongodb-exporter:9216'
-#--------------------------------------blackbox
-      - job_name: blackbox 
-        metrics_path: /metrics
-        static_configs:
-          - targets:
-            - blackbox-exporter:9115
+global:
+  scrape_interval: '5s'
 
-      - job_name: blackbox_http
-        metrics_path: /probe
-        params:
-          module: [http_2xx]
-        static_configs:
-          - targets:
-            - http://ui:9292
-            - http://comment:9292
-            - http://post:5000
-            
-        relabel_configs:
-          - source_labels: [__address__]
-            target_label: __param_target
-          - source_labels: [__param_target]
-            target_label: instance
-          - target_label: __address__
-            replacement: blackbox-exporter:9115
-    
-      - job_name: 'blackbox_port_connect'
-        metrics_path: /probe
-        params:
-          module: ['tcp_connect'] 
-        static_configs:
-          - targets:
-            - ui:9292 
-            - comment:9292
-            - post:5000
-        relabel_configs:
-          - source_labels: [__address__]
-            target_label: __param_target
-          - source_labels: [__param_target]
-            target_label: instance
-          - target_label: __address__
-            replacement: blackbox-exporter:9115
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets:
+        - 'localhost:9090'
+
+  - job_name: 'ui'
+    static_configs:
+      - targets:
+        - 'ui:9292'
+
+  - job_name: 'comment'
+    static_configs:
+      - targets:
+        - 'comment:9292'
+
+  - job_name: 'post'
+    static_configs:
+      - targets:
+        - 'post:5000'
+#--------------------------------------node-exporter
+  - job_name: 'node'
+    static_configs:
+      - targets:
+        - 'node-exporter:9100'
+#--------------------------------------mongodb_exporter
+  - job_name: 'percona_mongodb_exporter'
+    static_configs:
+      - targets:
+        - 'mongodb-exporter:9216'
+#--------------------------------------blackbox
+  - job_name: blackbox 
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+        - blackbox-exporter:9115
+
+  - job_name: blackbox_http
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - http://ui:9292
+        - http://comment:9292
+        - http://post:5000
+        
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  - job_name: 'blackbox_port_connect'
+    metrics_path: /probe
+    params:
+      module: ['tcp_connect'] 
+    static_configs:
+      - targets:
+        - ui:9292 
+        - comment:9292
+        - post:5000
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+#--------------------------------------cadvisor
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets:
+        - 'cadvisor:8080'
+#--------------------------------------telegraf
+  - job_name: 'telegraf'
+    static_configs:
+      - targets:
+        - 'telegraf:9273'
+#--------------------------------------Docker!
+
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['35.233.42.134:9323']
+
+      ##http://35.233.42.134:9323/
+
+#--------------------------------------trickster
+
+  - job_name: 'trickster'
+    static_configs:
+      - targets:
+        - 'trickster:8481'
+
+#--------------------------------------alerting
+rule_files:
+  - "alerts.yml"
+
+alerting:
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets:
+      - "alertmanager:9093"
+  

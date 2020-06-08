@@ -292,7 +292,7 @@ docker-machine ssh docker-host-ci "sudo mkdir -p /srv/gitlab/config /srv/gitlab/
 6. Подключили внешний репозиторий к проекту **git remote add gitlab http://$(docker-machine ip docker-host-ci)/homework/example.git**  
 7. Подняли Gitlab-runner так же в docker контейнере и зарегистрировали  
 
-```
+```docker
 docker run -d --name gitlab-runner --restart always \
 -v /srv/gitlab-runner/config:/etc/gitlab-runner \
 -v /var/run/docker.sock:/var/run/docker.sock \
@@ -472,3 +472,77 @@ docker-machine create --driver google \
 [16]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-1/monitoring/prometheus/prometheus.yml
 [17]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-1/docker/docker-compose.yml
 [18]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-1/Makefile
+
+# Monitoring-2
+
+1. Создали ВМ  
+
+    ```
+    docker-machine create --driver google \
+    --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
+    --google-machine-type n1-standard-1 \
+    --google-project docker-275905 \
+    --google-disk-size 40 \
+    --google-open-port 9292/tcp \ # APP  
+    --google-open-port 9090/tcp \ # prometheus  
+    --google-open-port 9093/tcp \ # alertmanager  
+    --google-open-port 8080/tcp \ # cadvisor  
+    --google-open-port 3000/tcp \ # grafana  
+    --google-open-port 9323/tcp \ # docker  
+    --google-zone europe-west1-b \  
+    docker-host  
+    ```
+    порты можно было добавлять по мере работы:  
+    
+    ```
+    gcloud compute firewall-rules create default --allow tcp:9090 --target-tags=docker-machine
+    ```
+
+2. Вынесли мониторинг в отдельный yml файл [docker-compose-monitoring.yml][19]  
+3. Настроили Grafana 
+   настроены дашборды monitoring/grafana/dashboards  
+    DockerMonitoring.json
+    UI_Service_Monitoring.json  
+    Business_Logic_Monitoring.json  
+
+4. Настроили Alertmanager  
+   Подключены уведомления в канал Slack #andrey_protasovitskiy  
+5. В рамках проекта настроена сборка образов и пуш их в docker hub  
+     alertmanager  
+     ```
+        cd ./monitoring/alertmanager && docker build -t ${USER_NAME}/alertmanager .
+        docker push ${USER_NAME}/alertmanager
+     ```
+     grafana  
+     ```
+        cd ./monitoring/grafana && docker build -t ${USER_NAME}/grafana .
+        docker push ${USER_NAME}/grafana
+     ```
+     telegraf  
+     ```
+        cd ./monitoring/telegraf && docker build -t ${USER_NAME}/telegraf .
+        docker push ${USER_NAME}/telegraf
+     ```
+     trickster  
+     ```
+        cd ./monitoring/trickster && docker build -t ${USER_NAME}/trickster .
+        docker push ${USER_NAME}/trickster
+     ```
+6. **Задания со \*** [Makefile][20] дополнен.
+7. **Задания со \*** подключен сбор метрик с Docker  
+В графана добавлен готовый дашборд  docker_engine_metrics.json  
+8. **Задания со \*** настроен сбор метрик с Docker демона посредством Telegraf.  
+    Добавлен дашборд Docker_telegraf.json  
+9. **Задания со \*** Добавлен алерт на "95 процентиль времени
+ответа UI" [monitoring/prometheus/alerts.yml][21]  
+настроена отправка алертов на e-mail [monitoring/alertmanager/config.yml][22]  
+10. **Задания со \*\*** Grafana настроено автоматическое добавление источника данных и дашборды [monitoring/grafana/][23]  
+11. **Задания со \*\*\*** Настроен Trickster и соттветсвено В grafana изменен источник данных на **http://trickster:8480**  
+    [monitoring/trickster/][24]
+
+[19]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-2/docker/docker-compose-monitoring.yml
+[20]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-2/Makefile
+[21]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-2/monitoring/prometheus/alerts.yml
+[22]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-2/monitoring/prometheus/prometheus.yml
+[23]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/monitoring-2/monitoring/grafana
+[24]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/monitoring-2/monitoring/trickster
