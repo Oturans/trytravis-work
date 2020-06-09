@@ -573,7 +573,8 @@ docker-machine create --driver google \
     [docker/docker-compose-logging.yml][25]  
     [logging/fluentd][26]  
 
-3. Настроили обработку неструктурированных логов от UI
+3. Настроили обработку неструктурированных логов от UI  
+   [logging/fluentd/fluent.conf][27]  
    ```
    ...
     <filter service.ui>
@@ -652,5 +653,6 @@ docker-machine create --driver google \
 P.S. В виде переменных у меня все равно не заработало =(  
 
 
-[25]:httqweq
-[26]:111111
+[25]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/logging-1/docker/docker-compose-logging.yml
+[26]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/logging-1/logging/fluentd
+[27]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/logging-1/logging/fluentd/fluent.conf
