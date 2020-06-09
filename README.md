@@ -546,3 +546,111 @@ docker-machine create --driver google \
 [22]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/monitoring-2/monitoring/prometheus/prometheus.yml
 [23]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/monitoring-2/monitoring/grafana
 [24]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/monitoring-2/monitoring/trickster
+
+
+# Logging-1  
+
+1. Создали ВМ  
+
+    ```
+    docker-machine create --driver google \
+    --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-oscloud/
+    global/images/family/ubuntu-1604-lts \
+    --google-machine-type n1-standard-1 \
+    --google-open-port 5601/tcp \ # Kibana
+    --google-open-port 9292/tcp \ # App  
+    --google-open-port 9411/tcp \ # Zipkin
+    logging
+    ...
+
+    порты можно было добавлять по мере работы:  
+
+    ```
+    gcloud compute firewall-rules create default --allow tcp:9200 --target-tags=docker-machine
+    ```
+
+2. Подняли и настроили EFK (ElasticSearch, Fluentd, Kibana)  
+    [docker/docker-compose-logging.yml][25]  
+    [logging/fluentd][26]  
+
+3. Настроили обработку неструктурированных логов от UI
+   ```
+   ...
+    <filter service.ui>
+    @type parser
+    format grok
+    grok_pattern service=%{WORD:service} \| event=%{WORD:event} \| request_id=%{GREEDYDATA:request_id} \| message='%{GREEDYDATA:message}'
+    key_name message
+    reserve_data true
+    </filter>
+    ...
+   ```
+
+
+4. **Задание со \*** UI-сервис шлет логи в нескольких форматах  
+   Добавили в [logging/fluentd/fluent.conf][27] блок фильтра  
+   ```
+   ...
+    <filter service.ui>
+    @type parser
+    format grok
+    grok_pattern service=%{WORD:service} \| event=%{WORD:event} \| path=%{GREEDYDATA:path} \| request_id=%{GREEDYDATA:request_id} \| remote_addr=%{GREEDYDATA:remote_addr} \| method= %{WORD:method} \| response_status=%{WORD:response_status} 
+    key_name message
+    reserve_data true
+    </filter>
+    ...
+    ```
+
+5. **Задание со \*** Разобраться с темой распределенного трейсинга и решить проблему
+
+Проблема в неправильной указании подключения, выжимка из лога:  
+```
+{
+  "_index": "fluentd-20200609",
+  "_type": "access_log",
+  "_id": "LLmrl3IB1EX98xsOuDJ6",
+  "_version": 1,
+  "_score": null,
+  "_source": {
+    "timestamp": "2020-06-09T06:01:52.860063",
+    "pid": "1",
+    "loglevel": "ERROR",
+    "progname": "",
+    "message": "Failed to read from Post service. Reason: Failed to open TCP connection to 127.0.0.1:4567 (Connection refused - connect(2) for \"127.0.0.1\" port 4567)",
+    "service": "ui",
+    "event": "show_all_posts",
+    "request_id": "5046c11c-9037-4df7-a770-8f92c8857132",
+    "@timestamp": "2020-06-09T06:01:52+00:00",
+    "@log_name": "service.ui"
+  },
+  "fields": {
+    "@timestamp": [
+      "2020-06-09T06:01:52.000Z"
+    ]
+  },
+  "highlight": {
+    "@log_name": [
+      "@kibana-highlighted-field@service.ui@/kibana-highlighted-field@"
+    ],
+    "@log_name.keyword": [
+      "@kibana-highlighted-field@service.ui@/kibana-highlighted-field@"
+    ]
+  },
+  "sort": [
+    1591682512000
+  ]
+} 
+```
+В свою очередь можно руками исправить код подставив нужные значения.  
+Либо передать в виде переменных в **docker-compose.yml**  
+
+      - POST_SERVICE_HOST=post  
+      - POST_SERVICE_PORT=5000  
+      - COMMENT_SERVICE_HOST=comment  
+      - COMMENT_SERVICE_PORT=9292  
+
+P.S. В виде переменных у меня все равно не заработало =(  
+
+
+[25]:httqweq
+[26]:111111

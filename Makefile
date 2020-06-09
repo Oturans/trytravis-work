@@ -2,14 +2,18 @@ USER_NAME = oturans
 
 #---------------------------------------------------system
 
-ip:
+ip-mon:
 	docker-machine ip docker-host
-ssh:
+ip-lpg:
+	docker-machine ip docker-host
+ssh-mon:
+	docker-machine ssh docker-host
+ssh-log:
 	docker-machine ssh docker-host
 
-#---------------------------------------------------docker-machine
+#---------------------------------------------------docker-host
 
-docker-start:
+docker-start-docker-host:
 	export USER_NAME=oturans
 	docker-machine start docker-host
 	docker-machine regenerate-certs docker-host -f
@@ -19,13 +23,31 @@ docker-eval:
 	eval $(docker-machine env docker-host)
 	docker ps -a
 
-docker-stop:
+docker-stop-docker-host:
 	docker-machine stop docker-host
+	eval $(docker-machine env -u)
+
+#---------------------------------------------------logging
+
+docker-start-logging:
+	export USER_NAME=oturans
+	docker-machine start logging
+	docker-machine regenerate-certs logging -f
+	docker-machine ip logging
+	
+docker-eval-log:
+	eval $(docker-machine env logging)
+	docker ps -a
+
+docker-stop-logging:
+	docker-machine stop logging
 	eval $(docker-machine env -u)
 
 #---------------------------------------------------START
 
-start: start-mon start-prog 
+start: start-log start-mon start-prog 
+start-lp: start-log start-prog
+start-mp: start-mon start-prog
 
 start-mon: build-mon
 	export USER_NAME=${USER_NAME}
@@ -35,20 +57,30 @@ start-prog: build-prog
 	export USER_NAME=${USER_NAME}
 	cd ./docker && docker-compose up -d 
 
+start-log: build-log
+	export USER_NAME=${USER_NAME}
+	cd ./docker && docker-compose -f docker-compose-logging.yml up -d
+
 #---------------------------------------------------STOP
 
-stop: stop-prog stop-mon 
+stop: stop-prog stop-log stop-mon
+
+stop-lp: stop-prog stop-log
+stop-mp: stop-prog stop-mon
 
 stop-prog: 
 	cd ./docker && docker-compose down 
 stop-mon:
 	cd ./docker && docker-compose -f docker-compose-monitoring.yml down
+stop-log:
+	cd ./docker && docker-compose -f docker-compose-logging.yml down
 
 #---------------------------------------------------BUILD
 
-build-all: build-prog build-mon
+build-all: build-prog build-mon build-log
 build-prog: build-ui build-comment build-post
 build-mon: build-prometheus build-blackbox build-alertmanager build-telegraf build-grafana build-trickster
+build-log: build-fluentd
 
 build-ui:
 	cd ./src/ui && bash ./docker_build.sh
@@ -76,6 +108,9 @@ build-grafana:
 
 build-trickster:
 	cd ./monitoring/trickster && docker build -t ${USER_NAME}/trickster .
+
+build-fluentd:
+	cd ./logging/fluentd && docker build -t ${USER_NAME}/fluentd .
 
 #---------------------------------------------------PUSH
 
@@ -107,3 +142,7 @@ push-grafana:
 
 push-trickster:
 	docker push ${USER_NAME}/trickster
+
+
+push-fluentd:
+	docker push ${USER_NAME}/fluentd

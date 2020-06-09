@@ -1,0 +1,45 @@
+version: '3'
+services:
+  fluentd:
+    image: ${USER_NAME}/fluentd
+    depends_on:
+        - elasticsearch
+    ports:
+        - "24224:24224"
+        - "24224:24224/udp"
+    networks:
+        - log_net
+
+  elasticsearch:
+    image: elasticsearch:7.4.0
+    environment:
+        - discovery.type=single-node
+    expose:
+        - 9200
+    ports:
+        - "9200:9200"
+    networks:
+        log_net:
+            aliases:
+                - elasticsearch
+  kibana:
+    image: kibana:7.4.0
+    depends_on:
+        - fluentd
+    ports:
+        - "5601:5601"
+    networks:
+        - log_net
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+        - "9411:9411"
+    networks:
+        - front_net
+        - back_net
+
+networks:
+    log_net:
+    front_net:
+    back_net:
