@@ -107,7 +107,7 @@ services:
   #  depends_on:
   #    - influxdb
 
-  #---------------------------------------------trickster
+#---------------------------------------------trickster
 
   trickster:
     image: ${USER_NAME}/trickster
@@ -117,7 +117,6 @@ services:
       - 8480:8480
     networks:
       - back_net
-
 
 # --------------------------------------------volumes
 volumes:
