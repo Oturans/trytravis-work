@@ -658,10 +658,10 @@ P.S. В виде переменных у меня все равно не зар�
 [27]:https://raw.githubusercontent.com/Otus-DevOps-2020-02/Oturans_microservices/logging-1/logging/fluentd/fluent.conf
 
 
-# Kubernetes-1
+# Kubernetes-1  
 
 1. Развернули Kubernetes по гайду [The Hard Way][28]  
- в связи с ограничениями GCP 2 controler и 2 worker.
+ в связи с ограничениями GCP 2 controler и 2 worker.  
 
 2. Создали манифесты  
     comment-deployment.yml  
@@ -674,15 +674,16 @@ P.S. В виде переменных у меня все равно не зар�
 
 4. **Задание со \*** Описал в качестве playbook установку worker, исходные данные, проходим по руководству до шага **Bootstrapping the Kubernetes Worker Nodes**
 Открываем файл [kubernetes/ansible/worker-install.yml][29] и выставляем значение переменной  
-**POD_CIDR**: "10.200.0.0/24"
+**POD_CIDR**: "10.200.0.0/24"  
 
-После чего из папки kubernetes/ansible выполняем
+После чего из папки kubernetes/ansible выполняем  
 
 **ansible-playbook -l worker_1 worker-install.yml**  
 
 где **worker_1** имя нашей виртуалки, почему dynamic_inventory меняет **-** на **_** пока не вникал.  
 P.S. Не забываем скорректировать файлы ansible.cfg и inventory.gcp.yml  
+P.S.S. Знаю что топорно, но работает, для одного раза хватит. "Не все требуется автоматизировать" =)  
 
  
 [28]:https://github.com/kelseyhightower/kubernetes-the-hard-way
-[29]:eeeeeeeee
+[29]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/blob/kubernetes-1/kubernetes/ansible/worker-install.yml
