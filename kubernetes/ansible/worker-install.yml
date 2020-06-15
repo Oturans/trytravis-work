@@ -1,0 +1,271 @@
+---
+- name: Install Worker
+  hosts: all
+  become: true
+  vars:
+    POD_CIDR: "10.200.0.0/24"
+    HOSTNAME: "{{ ansible_hostname }}"
+
+  tasks:
+
+  - name: Update repositories cache
+    apt:
+      update_cache: yes
+
+## ------- Install socat conntrack ipset
+  - name: Install socat conntrack ipset
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - "socat"
+      - "conntrack"
+      - "ipset"
+
+ ## ------- GET POD_CIDR  
+  # - name: GET POD_CIDR
+  #   shell: |
+  #     POD_CIDR=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/attributes/pod-cidr)
+
+## ------- Disable Swap
+
+  - name: Disable Swap
+    shell: |
+      swapoff -a
+    notify:
+      - restart service
+
+##### ------- Create the installation directories:
+
+  - name: Create the installation directories
+    file:
+      path: "{{ item }}"
+      state: directory
+    with_items:
+      - "/etc/cni/net.d"
+      - "/opt/cni/bin"  
+      - "/var/lib/kubelet"
+      - "/var/lib/kube-proxy"
+      - "/var/lib/kubernetes"
+      - "/var/run/kubernetes"
+      - "/tmp/containerd/"
+      - "/etc/containerd/"
+
+## ------- Download and Install Worker Binaries
+
+##### runc
+  - name: Download runc.amd64
+    get_url:
+      url:  https://github.com/opencontainers/runc/releases/download/v1.0.0-rc8/runc.amd64
+      dest: /usr/local/bin/runc
+      mode: a+x
+
+##### crictl
+
+  - name: Download crictl-v1.15.0-linux-amd64.tar.gz
+    unarchive:
+      src: https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.15.0/crictl-v1.15.0-linux-amd64.tar.gz
+      dest: /usr/local/bin/
+      remote_src: yes
+      mode: a+x
+
+##### cni-plugins
+
+  - name: Download cni-plugins-linux-amd64-v0.8.2.tgz
+    unarchive:
+      src: https://github.com/containernetworking/plugins/releases/download/v0.8.2/cni-plugins-linux-amd64-v0.8.2.tgz
+      dest: /opt/cni/bin/
+      mode: '0755'
+      remote_src: yes
+
+##### containerd
+
+  - name: Download containerd-1.2.9.linux-amd64.tar.gz
+    unarchive:
+      src:  https://github.com/containerd/containerd/releases/download/v1.2.9/containerd-1.2.9.linux-amd64.tar.gz
+      dest: /tmp/containerd
+      remote_src: yes
+
+  - name: Copy containerd/bin
+    copy:
+      src: /tmp/containerd/bin/
+      dest: /bin/
+      mode: '0755'
+      directory_mode: yes
+      remote_src: yes
+
+  - name: Copy containerd/bin
+    file:
+      path: "{{ item }}"
+      mode: '0755'
+    with_items:
+      - "/bin/containerd"
+      - "/bin/containerd-shim"
+      - "/bin/containerd-shim-runc-v1"
+      - "/bin/containerd-stress"
+      - "/bin/ctr"
+
+##### kubectl
+
+  - name: Download kubectl
+    get_url:
+      url:  https://storage.googleapis.com/kubernetes-release/release/v1.15.3/bin/linux/amd64/kubectl
+      dest: /usr/local/bin/kubectl
+      mode: a+x
+
+##### kube-proxy
+
+  - name: Download kube-proxy
+    get_url:
+      url:  https://storage.googleapis.com/kubernetes-release/release/v1.15.3/bin/linux/amd64/kube-proxy
+      dest: /usr/local/bin/kube-proxy
+      mode: a+x
+
+##### kubelet
+
+  - name: Download kubelet
+    get_url:
+      url:  https://storage.googleapis.com/kubernetes-release/release/v1.15.3/bin/linux/amd64/kubelet
+      dest: /usr/local/bin/kubelet
+      mode: a+x
+
+####  Configure CNI Networking
+
+  - name: Change bridge config file
+    template:
+      dest: /etc/cni/net.d/10-bridge.conf
+      src: templates/10-bridge.conf.j2
+
+  - name: Copy 99-loopback.conf
+    copy:
+      src: config/99-loopback.conf
+      dest: /etc/cni/net.d/99-loopback.conf
+
+
+#### Configure containerd
+
+  - name: Copy containerd config
+    copy:
+      src: config/config.toml
+      dest: /etc/containerd/config.toml
+
+
+  - name: Copy containerd.service config
+    copy:
+      src: config/containerd.service
+      dest: /etc/systemd/system/containerd.service
+    notify:
+      - daemon reload 
+
+  #### Configure the Kubelet
+
+  - name: Copy {{ HOSTNAME }}-key.pem
+    copy:
+      src: "../the_hard_way/{{ HOSTNAME }}-key.pem"
+      dest: /var/lib/kubelet/
+    notify:
+      restart service
+
+  - name: Copy {{ HOSTNAME }}.pem
+    copy:
+      src: "../the_hard_way/{{ HOSTNAME }}.pem"
+      dest: /var/lib/kubelet/
+    notify:
+      restart service
+
+  - name: Copy {{ HOSTNAME }}.kubeconfig
+    copy:
+      src: "../the_hard_way/{{ HOSTNAME }}.kubeconfig"
+      dest: /var/lib/kubelet/kubeconfig
+    notify:
+      restart service
+
+  - name: Copy ca.pem
+    copy:
+      src: "../the_hard_way/ca.pem"
+      dest: /var/lib/kubernetes/
+    notify:
+      - restart service
+
+
+  - name: Change Kubelet config file
+    template:
+      dest: /var/lib/kubelet/kubelet-config.yaml
+      src: templates/kubelet-config.yaml.j2
+    notify:
+        restart service
+  
+  - name: Copy kubelet.service config
+    copy:
+      src: ./config/kubelet.service
+      dest: /etc/systemd/system/kubelet.service
+    notify:
+      - daemon reload 
+
+#### Configure the Kubernetes Proxy
+
+  - name: Copy kube-proxy.kubeconfig 
+    copy:
+      src: ../the_hard_way/kube-proxy.kubeconfig
+      dest: /var/lib/kube-proxy/kubeconfig
+    notify:
+      restart service
+
+  - name: Copy kube-proxy-config.yaml
+    copy:
+      src: ./config/kube-proxy-config.yaml
+      dest: /var/lib/kube-proxy/kube-proxy-config.yaml
+    notify:
+      restart service
+
+  - name: Copy kube-proxy.service
+    copy:
+      src: ./config/kube-proxy.service
+      dest: /etc/systemd/system/kube-proxy.service
+    notify:
+      - daemon reload
+  
+## Enable the Worker Services
+  - name: enable Service
+    systemd: 
+      name: "{{ item }}"
+      enabled: yes
+    with_items:
+      - 'containerd'
+      - 'kubelet'
+      - 'kube-proxy'
+    notify:
+      - restart service
+
+  - name: start service
+    systemd: 
+      name: "{{ item }}"
+      state: started
+    with_items:
+      - 'containerd'
+      - 'kubelet'
+      - 'kube-proxy'
+
+  handlers:
+    ##  daemon_reload 
+    - name: daemon reload 
+      systemd: 
+        daemon_reload: yes
+      notify:
+        - restart service
+
+    - name: restart service
+      systemd: 
+        name: "{{ item }}"
+        state: restarted
+      with_items:
+        - 'containerd'
+        - 'kubelet'
+        - 'kube-proxy'
+  
+
+  
+  
+
+  
+  

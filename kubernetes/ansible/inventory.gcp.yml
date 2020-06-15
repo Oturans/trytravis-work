@@ -1,0 +1,20 @@
+plugin: gcp_compute
+projects:
+  - docker-275905
+zones:
+  - europe-west1-b
+filters: []
+auth_kind: serviceaccount
+service_account_file: ../../../../.gcp/docker.json 
+keyed_groups:
+
+  - key: name
+    prefix: ""
+    separator: ""
+
+groups:
+  all_worker: "'worker' in name"
+  all_controller: "'controller' in name"
+
+
+  
