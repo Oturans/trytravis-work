@@ -687,3 +687,73 @@ P.S.S. Знаю что топорно, но работает, для одног�
  
 [28]:https://github.com/kelseyhightower/kubernetes-the-hard-way
 [29]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/blob/kubernetes-1/kubernetes/ansible/worker-install.yml
+
+
+# Kubernetes-2
+
+1. Подняли minikube-кластер  
+```
+minikube start --driver=virtualbox --cpus=4 --memory=2048 --disk-size='20000mb'
+```
+2. Описали манифесты для нашего приложения  
+    [./kubernetes/reddit][30]  
+3. развернули приложение в minikube-кластер в namespace DEV.
+
+4. Подняли кластер Kubernetes в GCE.
+Развернули наше приложение  
+```
+kubectl apply -f kubernetes/reddit/dev-namespace.yml
+kubectl apply -n dev -f kubernetes/reddit/.
+```
+
+Приложение работает по порту:  
+http://104.154.191.253:31384/   
+
+
+5. **Задание cо \***  
+Разворачиваем кластер с помошью Terraform 
+[/kubernetes/terraform/][31]
+```
+terraform init
+terraform apply -auto-approve
+```
+Настраиваем доступ  
+```
+gcloud container clusters get-credentials my-gke-cluster --zone us-central1 --project docker-275905
+```
+Подымаем приложения  
+```
+kubectl apply -f kubernetes/reddit/dev-namespace.yml
+kubectl apply -n dev -f kubernetes/reddit/.
+```
+Добавляем прав  
+```
+kubectl create clusterrolebinding default-admin --clusterrole cluster-admin --serviceaccount=default:default
+```
+Запускаем kube proxy
+```
+kubectl proxy  
+```
+Открываем ссылку:
+```
+localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login
+```
+Получаем токен
+```
+kubectl describe secret $(kubectl get secret | awk '/^dashboard-sa-/{print $1}' ) | awk '$1=="token:"{print $2}'
+```
+К слову: 
+```
+Warning: "addons_config.0.kubernetes_dashboard": [DEPRECATED] The Kubernetes Dashboard addon is deprecated for clusters on GKE.
+```
+
+Наслаждаемся
+
+Доп ссылки:
+```
+https://mcs.mail.ru/help/howto-containers/kubernetesdashboard
+https://github.com/fabric8io/fabric8/issues/6840
+```
+
+[30]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-2/kubernetes/reddit
+[31]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-2/kubernetes/terraform
