@@ -760,3 +760,21 @@ https://github.com/fabric8io/fabric8/issues/6840
 
 [30]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-2/kubernetes/reddit
 [31]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-2/kubernetes/terraform
+
+# Kubernetes-3
+
+1. Посмотрели как работает kube-dns  
+2. Настроили доступ к UI нашего приложения через service NodePort  
+3. Настроили LoadBalancer от GCP для доступа к нашему приложению  
+4. Настроили Ingress-controller + Добивили TLS Secret  
+5. Активировали add-on NetworkPolicy в кластере и настроили доступ к mongodb только с pods - post и comment  
+    [kubernetes/reddit/mongo-network-policy.yml][32]
+6. Настроили PersistentVolume - reddit-mongo-disk, добавили к mongodb  
+7. Настроили PersistentVolumeClaim  
+8. Настроили Storage class Fast и динамический PVC, добавили к mongodb.
+9. **Задание со \*** Описали обьект Secret в виде манифеста
+    [kubernetes/reddit/secret.yml][33]
+
+[32]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-3/kubernetes/reddit/mongo-network-policy.yml
+
+[33]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-3/kubernetes/reddit/secret.yml
