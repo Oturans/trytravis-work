@@ -44,7 +44,7 @@ review:
   script:
     - install_dependencies
     - ensure_namespace
-    - install_tiller
+  #  - install_tiller
     - deploy
   variables:
     KUBE_NAMESPACE: review
