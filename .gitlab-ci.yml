@@ -123,7 +123,7 @@ stop_review:
     curl https://storage.googleapis.com/pub/gsutil.tar.gz | tar -xz -C $HOME
     export PATH=${PATH}:$HOME/gsutil
 
-    curl https://kubernetes-helm.storage.googleapis.com/helm-v2.13.1-linux-amd64.tar.gz | tar zx
+    curl https://get.helm.sh/helm-v3.2.4-linux-amd64.tar.gz | tar zx
 
     mv linux-amd64/helm /usr/bin/
     helm version --client
