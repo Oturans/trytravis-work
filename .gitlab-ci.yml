@@ -196,7 +196,7 @@ stop_review:
   function delete() {
     track="${1-stable}"
     name="$CI_ENVIRONMENT_SLUG"
-    helm delete "$name" --purge || true
+    helm delete "$name" || true
   }
 
 before_script:
