@@ -2,6 +2,6 @@ name: post
 version: 1.0.0
 description: OTUS reddit application POST
 maintainers:
-  - name: Someone
-    email: my@mail.com
+  - name: Andrey Protasovitskiy
+    email: fangil_2002@mail.ru
 appVersion: 1.0
