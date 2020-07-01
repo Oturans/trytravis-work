@@ -1,5 +1,13 @@
 USER_NAME = oturans
 
+#---------------------------------------------------Terraform GKE
+
+gke-create:
+	cd kubernetes/terraform && terraform apply -auto-approve
+	gcloud container clusters get-credentials my-gke-cluster --zone us-central1 --project docker-275905
+
+gke-destroy:
+	cd kubernetes/terraform && terraform destroy -auto-approve
 #---------------------------------------------------system
 
 ip-mon:

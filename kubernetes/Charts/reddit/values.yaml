@@ -1,0 +1,20 @@
+comment:
+  image:
+    repository: oturans/comment
+    tag: latest
+  service:
+    externalPort: 9292
+
+post:
+  image:
+    repository: oturans/post
+    tag: latest
+  service:
+    externalPort: 5000
+
+ui:
+  image:
+    repository: oturans/ui
+    tag: latest
+  service:
+    externalPort: 9292

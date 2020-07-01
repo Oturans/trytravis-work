@@ -778,3 +778,67 @@ https://github.com/fabric8io/fabric8/issues/6840
 [32]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-3/kubernetes/reddit/mongo-network-policy.yml
 
 [33]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-3/kubernetes/reddit/secret.yml
+
+# Kubernetes-4  
+
+1. Посмотрели работу Helm (2,3, plugin)  
+2. Настроили чарты для нашего приложения  
+3. Настроили CI для сборки каждого из наших приложений  
+    [ui][34]  -- CI Здорового человека =)  
+    [comment][35]  -- настроен на работу через Tiller plugin  
+    [post][36]  -- настроен на работу через helm3  
+
+4. Настроен Pipeline **reddit-deploy**  
+    [reddit-deploy][37]  -- избавились от auto_devops.  
+5. **Задание со \*** Настроили связку сборки и выкатки посредством прямого вызова pipeline по API.
+    как это работает: 
+
+    - в .gitlab-ci.yml{ui|post|comment} добавлен блок вызова пайплайна накатки в production только для ветки master  
+    ```
+    deploy_production:
+    stage: deploy_production
+    before_script:
+    - apk add -U curl
+    script:
+    - >
+        curl -X POST \
+        -F token=$token \
+        -F ref=master \
+        http://gitlab-gitlab/api/v4/projects/1/trigger/pipeline
+    only:
+    - master
+    ``` 
+    Где "1" это id проекта **reddit-deploy**
+
+    - Создаем токен в проекте **reddit-deploy**  и добавляем его в переменные группы(token)  
+    - Добавляем в [reddit-deploy][37] блок **production_trigers**  который запускается только с тригера,  
+    ```
+    production_trigers:
+    <<: *staging-deploy
+    stage: production
+    variables:
+        KUBE_NAMESPACE: production
+        host: $CI_PROJECT_PATH_SLUG-$CI_COMMIT_REF_SLUG
+        TILLER_NAMESPACE: kube-system
+        name: $CI_ENVIRONMENT_SLUG
+
+    environment:
+        name: production
+        url: http://production
+    only:
+        refs:
+        - triggers
+        kubernetes: active
+    ```
+    при этом корректируем другие этапы убирая в качестве инициатора trigers  
+    ```
+    except:
+        - triggers
+    ```
+
+    В итоге мы получим, при пуше в ветку мастер любого из наших приложений{ui|post|comment} после сборки образов и загрузки их в registry будет запускаться pipeline выкатки на production  
+
+[34]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-4/kubernetes/charts/gitlabci/.gitlab-ci-ui.yml
+[35]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-4/kubernetes/charts/gitlabci/.gitlab-ci-comment.yml
+[36]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-4/kubernetes/charts/gitlabci/.gitlab-ci-post.yml
+[37]:https://github.com/Otus-DevOps-2020-02/Oturans_microservices/tree/kubernetes-4/kubernetes/charts/gitlabci/.gitlab-ci-reddit.yml

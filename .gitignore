@@ -18,3 +18,5 @@ vault.key
 # Virtual env
 venv
 .env
+#Gitlab_CI
+Gitlab_ci

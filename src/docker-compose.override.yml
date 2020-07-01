@@ -2,7 +2,7 @@ version: '3.3'
 services:
   post:
     volumes:
-      - "/home/docker-user/post-py:/app"
+      - "/home/docker-user/post:/app"
     command: python3 post_app.py
     depends_on: 
       - post_db
